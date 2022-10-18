@@ -21,5 +21,6 @@ int __attribute((noreturn)) main(void) {
 		delay(1000000);
 	    GPIOC->ODR &= ~(1U<<13U);
 	    delay(1000000);
+		//
     }
 }
