@@ -1,12 +1,13 @@
 #include <stdint.h>
 #include <stm32f10x.h>
+#include "StaticLib/delay.h"
 
-void delay(uint32_t ticks) {
+/*void delay(uint32_t ticks) {
 	for (int i=0; i<ticks; i++) {
 		__NOP();
 	}
 }
-
+*/
 int __attribute((noreturn)) main(void) {
 	// Enable clock for AFIO
 	RCC->APB2ENR |= RCC_APB2ENR_AFIOEN;
