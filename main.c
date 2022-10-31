@@ -37,6 +37,15 @@ int __attribute((noreturn)) main(void) {
 			if (!buttonNewState && buttonPrevState) {
 				ledEnabled = !ledEnabled;
 			}
+	/* ALTERNATIVE
+		if(!buttonNewState&&buttonPrevState){
+			ledEnabled=!ledEnabled;
+			if(!ledEnabled){
+				GPIOC->ODR |= GPIO_ODR_ODR13;
+			}
+		}	
+	*/
+
 			buttonPrevState = buttonNewState;
 		}
 		if (ledPhase == 0) {
@@ -44,7 +53,6 @@ int __attribute((noreturn)) main(void) {
 			if (ledEnabled) {
 				uint32_t _gpios = GPIOC -> ODR;
 				GPIOC -> BSRR = ((_gpios & (1<<13))<<16) | (~_gpios & (1<<13)); 
-				ledEnabled;
 			}
 		}
 	}
