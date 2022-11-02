@@ -34,18 +34,9 @@ int __attribute((noreturn)) main(void) {
 		if (btnPhase == 0) {
 			btnPhase = btnPeriod;
 			bool buttonNewState = GPIOC -> IDR & (1<<14);
-			if (!buttonNewState && buttonPrevState) {
-				ledEnabled = !ledEnabled;
-			}
-	/* ALTERNATIVE
-		if(!buttonNewState&&buttonPrevState){
-			ledEnabled=!ledEnabled;
-			if(!ledEnabled){
-				GPIOC->ODR |= GPIO_ODR_ODR13;
-			}
-		}	
-	*/
-
+			if(!buttonNewState&&buttonPrevState){
+				ledEnabled=!ledEnabled;
+			}	
 			buttonPrevState = buttonNewState;
 		}
 		if (ledPhase == 0) {
