@@ -45,11 +45,13 @@ int __attribute((noreturn)) main(void) {
 
 	ToggleLED = false;
 	GPIOC->ODR |= 1<<13;
+	bool Mid_state,Up_state,Down_state;
+	uint16_t Current_ARR_value;
 
 	while (true)
 	{
 
-		bool Mid_state = GPIOC->IDR & (1<<14);
+		Mid_state = GPIOC->IDR & (1<<14);
 		if(!Mid_state){
 			ToggleLED = !ToggleLED;
 			while (!Mid_state)
@@ -58,51 +60,39 @@ int __attribute((noreturn)) main(void) {
 				delay_us(333);
 			}
 			
-		}
-		bool Up_state = GPIOA->IDR & (1<<1);
-		if (!Up_state)
-		{
-			ToggleLED = !ToggleLED;
-			while (!Up_state)
-			{
-				Up_state = GPIOA->IDR & (1<<1);
-				delay_us(333);
-			}
-			
-		}
-
-		bool Down_state = GPIOA->IDR & (1<<2);
-		if (!Down_state)
-		{
-			ToggleLED = !ToggleLED;
-			while (!Down_state)
-			{
-				Down_state = GPIOA->IDR & (1<<2);
-				delay_us(333);
-			}
-			
-		}
-		
-		
-		#if 0
-		if (~_IC & GPIO_IDR_IDR14)
-		{
-			ToggleLED = !ToggleLED; // Enabling or disabling LED light toggling 
 		} 
-			else if (~_IA & GPIO_IDR_IDR1)
-			{
-				if (TIM2->ARR < 64000) {
-					TIM2->ARR += 1000;
+			else if (1){
+				Current_ARR_value = TIM2->ARR;
+				Up_state = GPIOA->IDR & (1<<1);
+				if (!Up_state)
+				{
+					if (Current_ARR_value < 64000U) {
+							TIM2->ARR += 500U;
+						}
+					while (!Up_state)
+					{
+						Up_state = GPIOA->IDR & (1<<1);
+						delay_us(333);
+					}
 				}
 			} 
-				else if (~_IA & GPIO_IDR_IDR2)
-				{
-					if (TIM2->ARR > 2000) {
-					TIM2->ARR -= 1000;
+				else if (1){
+					Down_state = GPIOA->IDR & (1<<2);
+					if (!Down_state)
+					{
+						if (Current_ARR_value > 500U) {
+								TIM2->ARR -= 500U;
+							}
+						while (!Down_state)
+						{
+							Down_state = GPIOA->IDR & (1<<2);
+							delay_us(333);
+						}
+					}
 				}
-				}
-		#endif		
-		delay_us(333);
+					 else {
+						delay_us(333);
+					}		
 	}
 
 }
