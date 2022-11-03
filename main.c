@@ -34,7 +34,7 @@ int __attribute((noreturn)) main(void) {
 	//CONFIGURING TIMER TIM2
 	RCC->APB1RSTR |= RCC_APB1RSTR_TIM2RST; 	// Reseting TIM2
 	RCC->APB1RSTR &= ~RCC_APB1RSTR_TIM2RST; //
-	TIM2->PSC = 35999U; 					// Editing prescaler value (1-65536) to configure timer frequency
+	TIM2->PSC = 64999U; 					// Editing prescaler value (1-65536) to configure timer frequency
 	TIM2->ARR = 1000U;						// Editing TIM2 reload value (count to X number)
 	TIM2->DIER |=TIM_DIER_UIE;				// Enabling "Update" interrupt
 	NVIC_ClearPendingIRQ(TIM2_IRQn);		// Clearing pending interuptions for TIM2 ???
@@ -44,53 +44,57 @@ int __attribute((noreturn)) main(void) {
 	//BODY
 
 	ToggleLED = false;
-	GPIOC->ODR |= 1<<13;
+	GPIOC->ODR |= 1<<13;					// Disabling LED by default
 	bool Mid_state,Up_state,Down_state;
-	uint16_t Current_ARR_value;
+	uint16_t Current_PSC_value;
 
 	while (true)
-	{
-
+	{	
+		//All "button press" events organized in hierarchial order because of their mutual exclusiveness 
+		//MID BUTTON - first priority - enabling/disabling LED light toggling	
 		Mid_state = GPIOC->IDR & (1<<14);
 		if(!Mid_state){
-			ToggleLED = !ToggleLED;
-			while (!Mid_state)
+			ToggleLED = !ToggleLED; //Enabling / disabling LED light toggling
+			while (!Mid_state)	// Waiting until button is released to prevent stucking 
 			{
 				Mid_state = GPIOC->IDR & (1<<14);
-				delay_us(33);
+				delay_us(333);
 			}
 			
 		} 
+			//UP BUTTON - second priority - decreasing frequency
 			else {
-				Current_ARR_value = TIM2->ARR;
+				Current_PSC_value = TIM2->PSC;
 				Up_state = GPIOA->IDR & (1<<1);
 				if (!Up_state)
 				{
-					if (Current_ARR_value < 64000U) {
-							TIM2->ARR += 500U;
+					if (Current_PSC_value < 57000U) { //Preventing overstacking
+							TIM2->PSC += 8000U;	//Decreasing frequency 
 						}
 					while (!Up_state)
 					{
 						Up_state = GPIOA->IDR & (1<<1);
-						delay_us(33);
+						delay_us(333);
 					}
 				} 
+					// DOWN BUTTON - third priority - increacing frequency
 					else {
 						Down_state = GPIOA->IDR & (1<<2);
 						if (!Down_state)
 						{
-							if (Current_ARR_value > 500U) {
-									TIM2->ARR -= 500U;
+							if (Current_PSC_value > 8000U) {
+									TIM2->PSC -= 8000U; //Increasing frequency
 								} 
 							while (!Down_state)
 							{
 								Down_state = GPIOA->IDR & (1<<2);
-								delay_us(33);
+								delay_us(333);
 							}
 						} 
+							// NOTHING HAPPEND
 							else 
 							{
-								delay_us(33);
+								delay_us(333);
 							}
 					}
 			} 
