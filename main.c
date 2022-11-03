@@ -34,8 +34,8 @@ int __attribute((noreturn)) main(void) {
 	//CONFIGURING TIMER TIM2
 	RCC->APB1RSTR |= RCC_APB1RSTR_TIM2RST; 	// Reseting TIM2
 	RCC->APB1RSTR &= ~RCC_APB1RSTR_TIM2RST; //
-	TIM2->PSC = 35999; 						// Editing prescaler value (1-65536) to configure timer frequency
-	TIM2->ARR = 1000;						// Editing TIM2 reload value (count to X number)
+	TIM2->PSC = 35999U; 					// Editing prescaler value (1-65536) to configure timer frequency
+	TIM2->ARR = 1000U;						// Editing TIM2 reload value (count to X number)
 	TIM2->DIER |=TIM_DIER_UIE;				// Enabling "Update" interrupt
 	NVIC_ClearPendingIRQ(TIM2_IRQn);		// Clearing pending interuptions for TIM2 ???
 	NVIC_EnableIRQ(TIM2_IRQn);				// Enabling interuptions from TIM2 
@@ -57,11 +57,11 @@ int __attribute((noreturn)) main(void) {
 			while (!Mid_state)
 			{
 				Mid_state = GPIOC->IDR & (1<<14);
-				delay_us(333);
+				delay_us(33);
 			}
 			
 		} 
-			else if (1){
+			else {
 				Current_ARR_value = TIM2->ARR;
 				Up_state = GPIOA->IDR & (1<<1);
 				if (!Up_state)
@@ -72,27 +72,29 @@ int __attribute((noreturn)) main(void) {
 					while (!Up_state)
 					{
 						Up_state = GPIOA->IDR & (1<<1);
-						delay_us(333);
+						delay_us(33);
 					}
-				}
-			} 
-				else if (1){
-					Down_state = GPIOA->IDR & (1<<2);
-					if (!Down_state)
-					{
-						if (Current_ARR_value > 500U) {
-								TIM2->ARR -= 500U;
-							}
-						while (!Down_state)
+				} 
+					else {
+						Down_state = GPIOA->IDR & (1<<2);
+						if (!Down_state)
 						{
-							Down_state = GPIOA->IDR & (1<<2);
-							delay_us(333);
-						}
+							if (Current_ARR_value > 500U) {
+									TIM2->ARR -= 500U;
+								} 
+							while (!Down_state)
+							{
+								Down_state = GPIOA->IDR & (1<<2);
+								delay_us(33);
+							}
+						} 
+							else 
+							{
+								delay_us(33);
+							}
 					}
-				}
-					 else {
-						delay_us(333);
-					}		
+			} 
+		
 	}
 
 }
