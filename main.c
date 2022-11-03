@@ -43,13 +43,48 @@ int __attribute((noreturn)) main(void) {
 
 	//BODY
 
-	uint16_t _IA = GPIOA->IDR;
-	uint16_t _IC = GPIOC->IDR;
-
+	ToggleLED = false;
+	GPIOC->ODR |= 1<<13;
 
 	while (true)
 	{
-		ToggleLED = false;
+
+		bool Mid_state = GPIOC->IDR & (1<<14);
+		if(!Mid_state){
+			ToggleLED = !ToggleLED;
+			while (!Mid_state)
+			{
+				Mid_state = GPIOC->IDR & (1<<14);
+				delay_us(333);
+			}
+			
+		}
+		bool Up_state = GPIOA->IDR & (1<<1);
+		if (!Up_state)
+		{
+			ToggleLED = !ToggleLED;
+			while (!Up_state)
+			{
+				Up_state = GPIOA->IDR & (1<<1);
+				delay_us(333);
+			}
+			
+		}
+
+		bool Down_state = GPIOA->IDR & (1<<2);
+		if (!Down_state)
+		{
+			ToggleLED = !ToggleLED;
+			while (!Down_state)
+			{
+				Down_state = GPIOA->IDR & (1<<2);
+				delay_us(333);
+			}
+			
+		}
+		
+		
+		#if 0
 		if (~_IC & GPIO_IDR_IDR14)
 		{
 			ToggleLED = !ToggleLED; // Enabling or disabling LED light toggling 
@@ -66,43 +101,10 @@ int __attribute((noreturn)) main(void) {
 					TIM2->ARR -= 1000;
 				}
 				}
-		delay_us(1000);
+		#endif		
+		delay_us(333);
 	}
 
-	#if 0
-
-	#define MIN(a,b) ((a)<(b)) ? (a):(b)
-
-	uint32_t btnPeriod = 10000, ledPeriod = 1000000;
-	uint32_t btnPhase = btnPeriod, ledPhase = ledPeriod;
-
-	bool ledEnabled = true, buttonPrevState = GPIOC ->IDR & (1<<14);
-	
-	while(1){
-		uint32_t tau = MIN(btnPhase,ledPhase);
-		delay_us(tau);
-		ledPhase -=tau;
-		btnPhase -=tau;
-		if (btnPhase == 0) {
-			btnPhase = btnPeriod;
-			bool buttonNewState = GPIOC -> IDR & (1<<14);		
-			if(buttonNewState&&!buttonPrevState){
-				ledEnabled=!ledEnabled;
-			}	
-			buttonPrevState = buttonNewState;
-		}
-
-/*		
-		if (ledPhase == 0) {
-			ledPhase = ledPeriod;
-			if (ledEnabled) {
-				uint32_t _gpios = GPIOC -> ODR;
-				GPIOC -> BSRR = ((_gpios & (1<<13))<<16) | (~_gpios & (1<<13)); 
-			}
-		}
-*/		
-	}
-	#endif
 }
 void TIM2_IRQHandler(void) {
 	if (TIM2->SR & TIM_SR_UIF) 	// True if Update Interrupt Flag is set
