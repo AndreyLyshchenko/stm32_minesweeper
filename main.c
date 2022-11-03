@@ -34,9 +34,10 @@ int __attribute((noreturn)) main(void) {
 	//CONFIGURING TIMER TIM2
 	RCC->APB1RSTR |= RCC_APB1RSTR_TIM2RST; 	// Reseting TIM2
 	RCC->APB1RSTR &= ~RCC_APB1RSTR_TIM2RST; //
-	TIM2->PSC = 64999U; 					// Editing prescaler value (1-65536) to configure timer frequency
-	TIM2->ARR = 1000U;						// Editing TIM2 reload value (count to X number)
-	TIM2->DIER |=TIM_DIER_UIE;				// Enabling "Update" interrupt
+	TIM2->PSC = 1U; 					// Editing prescaler value (1-65536) to configure timer frequency
+	TIM2->ARR = 4000U;						// Editing TIM2 reload value (count to X number)
+	TIM2->CCR1 = 1000U;
+	TIM2->DIER |=TIM_DIER_UIE|TIM_DIER_CC1IE;				// Enabling "Update" interrupt
 	NVIC_ClearPendingIRQ(TIM2_IRQn);		// Clearing pending interuptions for TIM2 ???
 	NVIC_EnableIRQ(TIM2_IRQn);				// Enabling interuptions from TIM2 
 	TIM2->CR1 |= TIM_CR1_CEN;				// Enabling counter
@@ -52,6 +53,7 @@ int __attribute((noreturn)) main(void) {
 	{	
 		//All "button press" events organized in hierarchial order because of their mutual exclusiveness 
 		//MID BUTTON - first priority - enabling/disabling LED light toggling	
+
 		Mid_state = GPIOC->IDR & (1<<14);
 		if(!Mid_state){
 			ToggleLED = !ToggleLED; //Enabling / disabling LED light toggling
@@ -68,9 +70,12 @@ int __attribute((noreturn)) main(void) {
 				Up_state = GPIOA->IDR & (1<<1);
 				if (!Up_state)
 				{
-					if (Current_PSC_value < 57000U) { //Preventing overstacking
+					/*if (Current_PSC_value < 57000U) { //Preventing overstacking
 							TIM2->PSC += 8000U;	//Decreasing frequency 
-						}
+						}*/
+					//TIM2->CCR1=2000;
+					//TIM2->DIER|=0;	
+					TIM2->CCR1 += 1000;
 					while (!Up_state)
 					{
 						Up_state = GPIOA->IDR & (1<<1);
@@ -82,9 +87,10 @@ int __attribute((noreturn)) main(void) {
 						Down_state = GPIOA->IDR & (1<<2);
 						if (!Down_state)
 						{
-							if (Current_PSC_value > 8000U) {
+							/*if (Current_PSC_value > 8000U) {
 									TIM2->PSC -= 8000U; //Increasing frequency
-								} 
+								} */
+							TIM2->CCR1 -= 1000;	
 							while (!Down_state)
 							{
 								Down_state = GPIOA->IDR & (1<<2);
@@ -102,15 +108,22 @@ int __attribute((noreturn)) main(void) {
 	}
 
 }
+
 void TIM2_IRQHandler(void) {
 	if (TIM2->SR & TIM_SR_UIF) 	// True if Update Interrupt Flag is set
 	{
-		if (ToggleLED)
+		if (1)
 		{
 			uint32_t _gpios = GPIOC -> ODR;
-			GPIOC -> BSRR = ((_gpios & (1<<13))<<16) | (~_gpios & (1<<13)); // Toggling LED light
+			GPIOC -> BSRR = (~_gpios & (1<<13)); // Toggling LED light
 		}
 		TIM2->SR &= ~TIM_SR_UIF; // Clearing UIF flag	
+	}
+	if (TIM2->SR & TIM_SR_CC1IF) {
+
+		uint32_t _gpios = GPIOC -> ODR;
+		GPIOC -> BSRR = ((_gpios & (1<<13))<<16);// Toggling LED light	
+		TIM2->SR &= ~TIM_SR_CC1IF;
 	}
 	
 }
