@@ -53,6 +53,8 @@ set(SOURCE_FILES
     syscalls/syscalls.c
     StaticLib/delay.c
     StaticLib/delay.h
+    StaticLib/buttons.h
+    StaticLib/buttons.c
     main.c)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/.gdbinit DESTINATION ${EXECUTABLE_OUTPUT_PATH})
