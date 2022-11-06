@@ -37,8 +37,8 @@ int __attribute((noreturn)) main(void)
 	RCC->APB1RSTR |= RCC_APB1RSTR_TIM2RST;	// Reseting TIM2
 	RCC->APB1RSTR &= ~RCC_APB1RSTR_TIM2RST; //
 	TIM2->PSC = 1U;							// Editing prescaler value (1-65536) to configure timer frequency
-	TIM2->ARR = 4000U;						// Editing TIM2 reload value (count to X number)
-	TIM2->CCR1 = 1000U;
+	TIM2->ARR = 4002U;						// Editing TIM2 reload value (count to X number)
+	TIM2->CCR1 = 1001U;
 	TIM2->DIER |= TIM_DIER_UIE | TIM_DIER_CC1IE; // Enabling "Update" interrupt
 	NVIC_ClearPendingIRQ(TIM2_IRQn);			 // Clearing pending interuptions for TIM2 ???
 	NVIC_EnableIRQ(TIM2_IRQn);					 // Enabling interuptions from TIM2
@@ -54,67 +54,25 @@ int __attribute((noreturn)) main(void)
 	while (true)
 	{
 		// All "button press" events organized in hierarchial order because of their mutual exclusiveness
-		// MID BUTTON - first priority - enabling/disabling LED light toggling
+		// MID BUTTON - first priority - toggling LED light
 
-		Mid_state = GPIOC->IDR & (1 << 14);
-		if (!Mid_state)
+		if (BtnClick('C',14,'D',333,10000)==7)
 		{
-			ToggleLED = !ToggleLED; // Enabling / disabling LED light toggling
-			while (!Mid_state)		// Waiting until button is released to prevent stucking
-			{
-				Mid_state = GPIOC->IDR & (1 << 14);
-				delay_us(333);
-			}
+
 		}
-		// UP BUTTON - second priority - decreasing frequency
+		// UP BUTTON - second priority - increasing LED brightness
 		else
 		{
-			#if 0
-			Current_PSC_value = TIM2->PSC;
-			Up_state = GPIOA->IDR & (1 << 1);
-			if (!Up_state)
-			{
-				/*if (Current_PSC_value < 57000U) { //Preventing overstacking
-						TIM2->PSC += 8000U;	//Decreasing frequency
-					}*/
-				// TIM2->CCR1=2000;
-				// TIM2->DIER|=0;
-				TIM2->CCR1 += 1000;
-				while (!Up_state)
-				{
-					Up_state = GPIOA->IDR & (1 << 1);
-					delay_us(333);
-				}
-				
-			}
-			#endif
 			if (BtnClick('A',1,'D',333,10000)==7)
 			{
-				/* code */
+
 			}
-			
-			// DOWN BUTTON - third priority - increacing frequency
+			// DOWN BUTTON - third priority - decreacing LED brightness
 			else
-			{	
-				#if 0
-				Down_state = GPIOA->IDR & (1 << 2);
-				if (!Down_state)
-				{
-					/*if (Current_PSC_value > 8000U) {
-							TIM2->PSC -= 8000U; //Increasing frequency
-						} */
-					TIM2->CCR1 -= 1000;
-					while (!Down_state)
-					{
-						Down_state = GPIOA->IDR & (1 << 2);
-						delay_us(333);
-					}
-					
-				}
-				#endif
+			{
 				if (BtnClick('A',2,'D',300,10000)==7)
 				{
-					/* code */
+
 				}
 				
 				// NOTHING HAPPEND
@@ -131,7 +89,7 @@ void TIM2_IRQHandler(void)
 {
 	if (TIM2->SR & TIM_SR_UIF) // True if Update Interrupt Flag is set
 	{
-		if (1)
+		if (ToggleLED)
 		{
 			uint32_t _gpios = GPIOC->ODR;
 			GPIOC->BSRR = (~_gpios & (1 << 13)); // Toggling LED light
@@ -140,19 +98,43 @@ void TIM2_IRQHandler(void)
 	}
 	if (TIM2->SR & TIM_SR_CC1IF)
 	{
-
-		uint32_t _gpios = GPIOC->ODR;
-		GPIOC->BSRR = ((_gpios & (1 << 13)) << 16); // Toggling LED light
+		if (ToggleLED) 
+		{
+			uint32_t _gpios = GPIOC->ODR;
+			GPIOC->BSRR = ((_gpios & (1 << 13)) << 16); // Toggling LED light
+		}
 		TIM2->SR &= ~TIM_SR_CC1IF;
 	}
 }
 
+void ButtonClick_C_14_Down()
+{
+	// ON/OFF LED light on MID button click
+	ToggleLED = !ToggleLED;
+	if (!ToggleLED) 
+	{
+		GPIOC-> BSRR =~GPIOC->ODR & (1<<13);
+	} else
+	{
+		GPIOC-> BSRR = GPIOC->ODR & (1<<13)<<16;
+	}
+
+}
+
 void ButtonClick_A_1_Down()
 {
-	TIM2->CCR1 += 1000;
+	if (TIM2->CCR1<10000)
+	{
+		TIM2->CCR1 += 1000;
+	}
+	
+
 }
 
 void ButtonClick_A_2_Down()
-{
-	TIM2->CCR1 -= 1000;
+{	
+	if (TIM2->CCR1>1000)
+	{
+		TIM2->CCR1 -= 1000;
+	}
 }
