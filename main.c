@@ -36,9 +36,9 @@ int __attribute((noreturn)) main(void)
 	// CONFIGURING TIMER TIM2
 	RCC->APB1RSTR |= RCC_APB1RSTR_TIM2RST;	// Reseting TIM2
 	RCC->APB1RSTR &= ~RCC_APB1RSTR_TIM2RST; //
-	TIM2->PSC = 1U;							// Editing prescaler value (1-65536) to configure timer frequency
-	TIM2->ARR = 4002U;						// Editing TIM2 reload value (count to X number)
-	TIM2->CCR1 = 1001U;
+	TIM2->PSC = 999U;							// Editing prescaler value (1-65536) to configure timer frequency
+	TIM2->ARR = 1000;						// Editing TIM2 reload value (count to X number)
+	TIM2->CCR1 = 500U;
 	TIM2->DIER |= TIM_DIER_UIE | TIM_DIER_CC1IE; // Enabling "Update" interrupt
 	NVIC_ClearPendingIRQ(TIM2_IRQn);			 // Clearing pending interuptions for TIM2 ???
 	NVIC_EnableIRQ(TIM2_IRQn);					 // Enabling interuptions from TIM2
@@ -56,32 +56,34 @@ int __attribute((noreturn)) main(void)
 		// All "button press" events organized in hierarchial order because of their mutual exclusiveness
 		// MID BUTTON - first priority - toggling LED light
 
+		// Function BtnCLick is triggering Click event, according to its input data:
+		// Port, Pin, ClickMode(OnPress -"D", OnRelease - "U", While holding -"H"), 
+		// Defalut delay (for "D" and "U" mode) and Hold delay (for "H" mode).
+		// Integer, returned by function, provides information about internal errors.
+		// ErrConde 7 indicates successfull event generatin after corresponding button was pressed,
+		// 0 - corresponding button was not pressed.
+
 		if (BtnClick('C',14,'D',333,10000)==7)
 		{
 
 		}
 		// UP BUTTON - second priority - increasing LED brightness
-		else
-		{
-			if (BtnClick('A',1,'D',333,10000)==7)
+		else if (BtnClick('A',1,'D',333,10000)==7)
 			{
 
 			}
 			// DOWN BUTTON - third priority - decreacing LED brightness
-			else
-			{
-				if (BtnClick('A',2,'D',300,10000)==7)
+			else if (BtnClick('A',2,'D',333,10000)==7)
 				{
 
 				}
-				
 				// NOTHING HAPPEND
 				else
 				{
 					delay_us(333);
 				}
-			}
-		}
+			
+		
 	}
 }
 
@@ -103,7 +105,7 @@ void TIM2_IRQHandler(void)
 			uint32_t _gpios = GPIOC->ODR;
 			GPIOC->BSRR = ((_gpios & (1 << 13)) << 16); // Toggling LED light
 		}
-		TIM2->SR &= ~TIM_SR_CC1IF;
+		TIM2->SR &= ~TIM_SR_CC1IF; //Clearing Count compare interrupt flag
 	}
 }
 
@@ -122,19 +124,19 @@ void ButtonClick_C_14_Down()
 }
 
 void ButtonClick_A_1_Down()
-{
-	if (TIM2->CCR1<10000)
+{	
+	if (TIM2 -> CCR1 < 1000) 
 	{
-		TIM2->CCR1 += 1000;
+		TIM2->CCR1 +=100;
 	}
-	
 
 }
 
 void ButtonClick_A_2_Down()
 {	
-	if (TIM2->CCR1>1000)
+	if (TIM2 -> CCR1 > 100) 
 	{
-		TIM2->CCR1 -= 1000;
+		TIM2->CCR1 -=100;
 	}
+
 }
