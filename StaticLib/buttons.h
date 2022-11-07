@@ -4,6 +4,12 @@
 #include <stdbool.h>
 #include "delay.h"
 
+static bool LinkArrayIsSet = false;
+
+static void (*FunctionLink[0b11111111])();
+
+void InitializingLinkArray();
+
 int BtnClick(char IO_Port, int IO_Pin, char IO_Mode, uint32_t DefaultDelay, uint32_t HoldDelay);
 
 // PORT A
@@ -200,3 +206,4 @@ void WEAK ButtonClick_C_14_Hold();
 void WEAK ButtonClick_C_15_Down();
 void WEAK ButtonClick_C_15_Up();
 void WEAK ButtonClick_C_15_Hold();
+

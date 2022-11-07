@@ -4,6 +4,7 @@
 #include "StaticLib/buttons.h"
 #include <stdbool.h>
 
+
 bool ToggleLED; // Adding global variable, which control LED light toggling
 
 int __attribute((noreturn)) main(void)
@@ -60,7 +61,7 @@ int __attribute((noreturn)) main(void)
 		// Port, Pin, ClickMode(OnPress -"D", OnRelease - "U", While holding -"H"), 
 		// Defalut delay (for "D" and "U" mode) and Hold delay (for "H" mode).
 		// Integer, returned by function, provides information about internal errors.
-		// ErrConde 7 indicates successfull event generatin after corresponding button was pressed,
+		// ErrCodes 7,8,9 are indicating successfull event generatin after corresponding button was pressed,
 		// 0 - corresponding button was not pressed.
 
 		if (BtnClick('C',14,'D',333,10000)==7)
