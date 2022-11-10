@@ -4,6 +4,12 @@
 #include "StaticLib/buttons.h"
 #include <stdbool.h>
 
+void SPI1_Init();
+void SPI1_Write(uint8_t data);
+uint8_t SPI1_Read();
+void cmd(uint8_t data);
+void dat(uint8_t data);
+
 
 bool ToggleLED; // Adding global variable, which control LED light toggling
 
@@ -24,15 +30,15 @@ int __attribute((noreturn)) main(void)
 	GPIOC->CRH &= ~GPIO_CRH_MODE14; //
 	GPIOC->ODR |= GPIO_ODR_ODR14;	//
 
-	GPIOA->CRL &= ~GPIO_CRL_CNF1;  // Setting up port A1 in input pull-up mode
-	GPIOA->CRL |= GPIO_CRL_CNF1_1; //
-	GPIOA->CRL &= ~GPIO_CRL_MODE1; //
-	GPIOA->ODR |= GPIO_ODR_ODR1;   //
+	GPIOB->CRH &= ~GPIO_CRH_CNF10;  // Setting up port B10 in input pull-up mode
+	GPIOB->CRH |= GPIO_CRH_CNF10_1; //	
+	GPIOB->CRH &= ~GPIO_CRH_MODE10; //
+	GPIOB->ODR |= GPIO_ODR_ODR10;   //
 
-	GPIOA->CRL &= ~GPIO_CRL_CNF2;  // Setting up port A2 in input pull-up mode
-	GPIOA->CRL |= GPIO_CRL_CNF2_1; //
-	GPIOA->CRL &= ~GPIO_CRL_MODE2; //
-	GPIOA->ODR |= GPIO_ODR_ODR2;   //
+	GPIOB->CRH &= ~GPIO_CRH_CNF11;  // Setting up port B11 in input pull-up mode
+	GPIOB->CRH |= GPIO_CRH_CNF11_1; //	
+	GPIOB->CRH &= ~GPIO_CRH_MODE11; //
+	GPIOB->ODR |= GPIO_ODR_ODR11;   //
 
 	// CONFIGURING TIMER TIM2
 	RCC->APB1RSTR |= RCC_APB1RSTR_TIM2RST;	// Reseting TIM2
@@ -54,6 +60,36 @@ int __attribute((noreturn)) main(void)
 
 	while (true)
 	{
+		SPI1_Init();
+		GPIOA->ODR &= ~GPIO_ODR_ODR4; // CS=0
+		GPIOA->ODR &= ~GPIO_ODR_ODR2; // RESET=0 - аппаратный сброс
+		delay(10000); // Wait for the power stabilized
+		GPIOA->ODR |= GPIO_ODR_ODR2; // RESET=1
+		delay(1000); // Wait <1ms
+
+		cmd(0xA2); //LCD Drive set 1/9 bias
+		cmd(0xA0); // RAM Address SEG Output normal
+		cmd(0xC8); // Common output mode selection
+		cmd(0x28 | 0x07); // Power control mode
+		cmd(0x20 | 0x05); // Voltage regulator
+		cmd(0xA6); // Normal color, A7 = inverse color
+		cmd(0xAF); // Display on
+
+		cmd(0x40); //	Go home
+		
+		cmd(0xB0|0x00);
+		for (int i=0;i <= 7;i++)
+		{
+			//cmd(0x80);
+			dat(0xff);
+		}
+
+		while (1)
+		{
+			
+		}
+		
+
 		// All "button press" events organized in hierarchial order because of their mutual exclusiveness
 		// MID BUTTON - first priority - toggling LED light
 
@@ -63,18 +99,18 @@ int __attribute((noreturn)) main(void)
 		// Integer, returned by function, provides information about internal errors.
 		// ErrCodes 7,8,9 are indicating successfull event generatin after corresponding button was pressed,
 		// 0 - corresponding button was not pressed.
-
+#if 0
 		if (BtnClick('C',14,'D',333,10000)==7)
 		{
 
 		}
 		// UP BUTTON - second priority - increasing LED brightness
-		else if (BtnClick('A',1,'D',333,10000)==7)
+		else if (BtnClick('B',10,'D',333,10000)==7)
 			{
 
 			}
 			// DOWN BUTTON - third priority - decreacing LED brightness
-			else if (BtnClick('A',2,'D',333,10000)==7)
+			else if (BtnClick('B',11,'D',333,10000)==7)
 				{
 
 				}
@@ -84,7 +120,7 @@ int __attribute((noreturn)) main(void)
 					delay_us(333);
 				}
 			
-		
+#endif		
 	}
 }
 
@@ -124,7 +160,7 @@ void ButtonClick_C_14_Down()
 
 }
 
-void ButtonClick_A_1_Down()
+void ButtonClick_B_10_Down()
 {	
 	if (TIM2 -> CCR1 < 1000) 
 	{
@@ -133,7 +169,7 @@ void ButtonClick_A_1_Down()
 
 }
 
-void ButtonClick_A_2_Down()
+void ButtonClick_B_11_Down()
 {	
 	if (TIM2 -> CCR1 > 100) 
 	{
@@ -179,9 +215,11 @@ GPIOA->CRL |= GPIO_CRL_MODE4;
 //RS: MODE3 = 0x03 (11b); CNF3 = 0x00 (00b)
 GPIOA->CRL |= GPIO_CRL_MODE3;
 
-//RESET: MODE2 = 0x03 (11b); CNF2 = 0x01 (00b)
+
+//RESET: MODE2 = 0x03 (11b); CNF2 = 0x00 (00b)
 GPIOA->CRL |= GPIO_CRL_MODE2;
 GPIOA->ODR |= GPIO_ODR_ODR2; // Set 'RESET' high (Standby mode)
+
 
 /**********************/
 /*** Настройка SPI1 ***/
@@ -191,11 +229,13 @@ SPI1->CR1 &= ~SPI_CR1_LSBFIRST; // LSBFIRST=0 MSB First
 SPI1->CR1 &= ~SPI_CR1_CRCEN; // Disable CRC
 SPI1->CR1 |= SPI_CR1_SSM; // Программное управление SS
 SPI1->CR1 |= SPI_CR1_SSI; // SS в высоком состоянии
-SPI1->CR1 &= ~SPI_CR1_BR; // Clear BR[2:0] bits
-SPI1->CR1 |= SPI_CR1_BR_2; // BR[2:0]=100, Скорость передачи: F_PCLK/32
+//SPI1->CR1 &= ~SPI_CR1_BR; // Clear BR[2:0] bits
+SPI1->CR1 |= SPI_CR1_BR; // BR[2:0]=100, Скорость передачи: F_PCLK/32
 SPI1->CR1 |= SPI_CR1_MSTR; // Режим Master (ведущий)
 SPI1->CR1 &= ~(SPI_CR1_CPOL | SPI_CR1_CPHA); //Режим работы SPI: CPOL=0 CPHA=0
 SPI1->CR1 |= SPI_CR1_SPE; //Включаем SPI
+
+
 }
 
 void SPI1_Write(uint8_t data)
@@ -214,4 +254,19 @@ SPI1->DR = 0; //запускаем обмен
 while(!(SPI1->SR & SPI_SR_RXNE));
 //возвращаем значение буфера приемника
 return SPI1->DR;
+}
+
+void cmd(uint8_t data){ // Отправка команды
+GPIOA->ODR &= ~GPIO_ODR_ODR3; // A0=0 --указание на то, что отправляем команду
+GPIOA->ODR &= ~GPIO_ODR_ODR4; // CS=0 – указание дисплею, что данные адресованы ему
+delay(1000);
+SPI1_Write(data);
+GPIOA->ODR |= GPIO_ODR_ODR4; // CS=1 – окончание передачи данных
+}
+void dat(uint8_t data){ // Отправка данных
+GPIOA->ODR |= GPIO_ODR_ODR3; // A0=1 --указание на то, что отправляем данные
+GPIOA->ODR &= ~GPIO_ODR_ODR4; // CS=0 – указание дисплею, что данные адресованы ему
+delay(1000);
+SPI1_Write(data);
+GPIOA->ODR |= GPIO_ODR_ODR4; // CS=1 – окончание передачи данных
 }
