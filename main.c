@@ -4,6 +4,7 @@
 #include "StaticLib/buttons.h"
 #include <stdbool.h>
 #include "StaticLib/spi.h"
+#include "StaticLib/display.h"
 
 void cmd(uint8_t data);
 void dat(uint8_t data);
@@ -61,14 +62,42 @@ int __attribute((noreturn)) main(void)
 	{
 		SPI1_Init();
 		SPI1_Preset();
-		
-		cmd(0xB0|0x00);
-		for (int i=0;i <= 7;i++)
+		// 132x(8*8+1) declared
+		// but 128x64 real
+		//put_pixel(1,1,5);
+		display_fill(0x00);
+		for (uint8_t posx=127; posx>=0;posx--)
 		{
-			//cmd(0x80);
-			dat(0xff);
+		display_fill(0x00);
+		put_pixel(posx,0,0);
+		delay_us(750000);
+		if (posx==0)
+		{
+			posx=127;
 		}
+		
+		}
+#if 0
+		GPIOA->BSRR = GPIO_ODR_ODR4 << 16U; // Selecting display (CS=0) 
+		for (uint8_t i = 0; i < 1; i++)
+		{
+			GPIOA->BSRR = GPIO_ODR_ODR3 << 16U; //Selecting sending of command (A0=0)
 
+			SPI1_Write(0xB0|i);		// Seting page address ((0xb0) command code + (0b0000<=i<=0b0111) page adress)
+
+			SPI1_Write(0x10|0b0000);				// Seting column upper bit
+			SPI1_Write(0x00|0b0000);			// Seting column lower bit 
+			while (SPI1->SR & SPI_SR_BSY);
+
+		//	for(uint8_t j = 0; j < 132; j++)
+			{
+				GPIOA->BSRR = GPIO_ODR_ODR3; // Selecting sending of data
+				SPI1_Write(0b00000001);			 // Turning off pixels
+				while (SPI1->SR & SPI_SR_BSY);
+			}
+		}
+		GPIOA->BSRR = GPIO_ODR_ODR4; // Ending display selection
+#endif
 		// All "button press" events organized in hierarchial order because of their mutual exclusiveness
 		// MID BUTTON - first priority - toggling LED light
 
