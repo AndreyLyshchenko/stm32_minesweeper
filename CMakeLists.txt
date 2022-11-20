@@ -55,6 +55,8 @@ set(SOURCE_FILES
     StaticLib/delay.h
     StaticLib/buttons.h
     StaticLib/buttons.c
+    StaticLib/spi.h
+    StaticLib/spi.c
     main.c)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/.gdbinit DESTINATION ${EXECUTABLE_OUTPUT_PATH})
