@@ -8,6 +8,8 @@
 
 void cmd(uint8_t data);
 void dat(uint8_t data);
+extern uint8_t Bit_map[128][8];
+
 
 
 bool ToggleLED; // Adding global variable, which control LED light toggling
@@ -64,19 +66,15 @@ int __attribute((noreturn)) main(void)
 		SPI1_Preset();
 		// 132x(8*8+1) declared
 		// but 128x64 real
-		//put_pixel(1,1,5);
-		display_fill(0x00);
-		for (uint8_t posx=127; posx>=0;posx--)
-		{
-		display_fill(0x00);
-		put_pixel(posx,0,0);
-		delay_us(750000);
-		if (posx==0)
-		{
-			posx=127;
-		}
 		
-		}
+		display_fill(0x00);
+		//display_fill(0b11111111);
+		put_pixel(0,0,1);
+		put_pixel(0,63,1);
+		put_pixel(127,0,1);
+		put_pixel(127,63,1);
+
+
 #if 0
 		GPIOA->BSRR = GPIO_ODR_ODR4 << 16U; // Selecting display (CS=0) 
 		for (uint8_t i = 0; i < 1; i++)
