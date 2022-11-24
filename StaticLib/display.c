@@ -1,10 +1,9 @@
 #include "display.h"
-#include "spi.h"
 
 static uint8_t Bit_map[128][8];
 static uint16_t Page_queue[QUEUE_LENGTH];
 
-
+///@param filler 8-bit vertical pattern, most significant bit is a physically lower one
 void display_fill(uint8_t filler)
 {
     uint8_t page_number =0b000; //0b111 (7) max
@@ -33,6 +32,9 @@ void display_fill(uint8_t filler)
     GPIOA->BSRR = GPIO_ODR_ODR4; // Ending display selection
 }
 
+ 
+/// @param state 1 - on, 0 - off
+/// @param virtual if 0 - PAGE, containing pixel, will be updated immediately
 void put_pixel(uint8_t x, uint8_t y, uint8_t state, uint8_t virtual)
 {
     uint8_t x_up,x_low,page_number,page_pos;
@@ -76,7 +78,7 @@ void put_pixel(uint8_t x, uint8_t y, uint8_t state, uint8_t virtual)
                 page_flag |= x<<3;
                 page_flag |= page_number;
                 page_flag |= 1<<11; // to prevent ignoring (0,0) address 
-                for (int i = 0; i < QUEUE_LENGTH; i++)
+                for (uint16_t i = 0; i < QUEUE_LENGTH; i++)
                 {
                     if (Page_queue[i] != 0)
                     {
@@ -94,13 +96,13 @@ void put_pixel(uint8_t x, uint8_t y, uint8_t state, uint8_t virtual)
             }
     } 
 }
-
+ 
 void draw_changes(void)
 {
     if (Page_queue[0]!=0)
     {
         GPIOA->BSRR = GPIO_ODR_ODR4 << 16U; // Selecting display (CS=0) 
-        for (int i = 0; i < QUEUE_LENGTH; i++)
+        for (uint16_t i = 0; i < QUEUE_LENGTH; i++)
         {
             if (Page_queue[i]!=0)
             {
@@ -132,5 +134,85 @@ void draw_changes(void)
         }
         GPIOA->BSRR = GPIO_ODR_ODR4; // Ending display selection
     }
+}
+/// @param state 0 - black line, 1 - white line
+/// @param virtual if 0 - line will be drawn immediately
+void line(int x1, int y1, int x2, int y2, uint8_t state, uint8_t virtual)
+{
+    int buf;
+    
+    int deltax = abs(x2 - x1);
+    int deltay = abs(y2 - y1);
+    
+    int error = 0;
+
+    if (deltax>=deltay)
+        {
+        if (x1>x2)
+        {
+            buf = x2;
+            x2 = x1;
+            x1 = buf;
+            buf = y2;
+            y2=y1;
+            y1=buf;
+        }
+        
+        int deltaerr = (deltay + 1);
+        int y = y1;
+        int diry = y2 - y1;
+        if (diry > 0)
+        { 
+            diry = 1;
+        }   
+        if (diry < 0)
+        { 
+            diry = -1;
+        }   
+        for (int x = x1; x <= x2;x++)
+        {
+            put_pixel(x,y,state,virtual);
+            error = error + deltaerr;
+            if (error >= (deltax + 1))
+            {
+                y = y + diry;
+                error = error - (deltax + 1);
+            }
+        }
+    }
+        else
+        {
+            if (y1>y2)
+            {
+                buf = y2;
+                y2 = y1;
+                y1 = buf;
+                buf = x2;
+                x2=x1;
+                x1=buf;
+            }
+
+            int deltaerr = (deltax + 1);
+            int x = x1;
+            int dirx = x2 - x1;
+            if (dirx > 0)
+            { 
+                dirx = 1;
+            }   
+            if (dirx < 0)
+            { 
+                dirx = -1;
+            }   
+            for (int y = y1; y <= y2;y++)
+            {
+                put_pixel(x,y,state,virtual);
+                error = error + deltaerr;
+                if (error >= (deltay + 1))
+                {
+                    x = x + dirx;
+                    error = error - (deltay + 1);
+                }
+            }
+        }        
 }
 

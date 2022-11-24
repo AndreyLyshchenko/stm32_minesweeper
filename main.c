@@ -7,9 +7,6 @@
 #include "StaticLib/display.h"
 #include "StaticLib/configuration.h"
 
-
-//void cmd(uint8_t data);
-//void dat(uint8_t data);
 extern uint8_t Bit_map[128][8];
 void toggle_led(void);
 
@@ -35,13 +32,37 @@ int __attribute((noreturn)) main(void)
 		SPI1_Preset();
 		// 132x(8*8+1) declared
 		// but 128x64 real
-		
+
 		display_fill(0x00);
 		put_pixel(0,0,1,VIRTUAL);
 		put_pixel(0,63,1,VIRTUAL);
 		put_pixel(127,0,1,VIRTUAL);
 		put_pixel(127,63,1,VIRTUAL);
 		draw_changes();
+
+		int x = 0;
+		int y = 0;
+		int state = 1;
+		while (1)
+		{
+			while (1)
+			{
+				if (x<127) {x++;}
+				else if (y<63){y++;}
+				else {break;}
+				line(63,31,x,y,state,REAL);
+			}
+			while (1)
+			{
+				if (x>0) {x--;}
+				else if (y>0){y--;}
+				else {break;}
+				line(63,31,x,y,state,REAL);
+			}	
+			if (state==1){state = 0;} else {state=1;}
+		}
+		
+
 
 		// All "button press" events organized in hierarchial order because of their mutual exclusiveness
 
@@ -124,3 +145,4 @@ void toggle_led()
 		GPIOC-> BSRR = GPIOC->ODR & (1<<13)<<16;
 	}
 }
+
