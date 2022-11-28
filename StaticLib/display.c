@@ -140,12 +140,12 @@ void draw_changes(void)
 void line(int x1, int y1, int x2, int y2, uint8_t state, uint8_t virtual)
 {
     int buf;
-    
+
     int deltax = abs(x2 - x1);
     int deltay = abs(y2 - y1);
     
     int error = 0;
-
+    
     if (deltax>=deltay)
         {
         if (x1>x2)
@@ -213,6 +213,41 @@ void line(int x1, int y1, int x2, int y2, uint8_t state, uint8_t virtual)
                     error = error - (deltay + 1);
                 }
             }
-        }        
+        }       
+ 
+}
+
+void rectangle(int x1,int y1, int x2, int y2, uint8_t border_state, uint8_t filler,  uint8_t virtual)
+{
+    if (x1>x2)
+    {
+        int buf;
+        buf = x1;
+        x1 = x2;
+        x2 = buf;
+    }
+
+    if (y1>y2)
+    {
+        int buf;
+        buf = y1;
+        y1 = y2;
+        y2 = buf;
+    }
+    line(x1,y1,x2,y1,border_state,virtual);
+    line(x2,y1,x2,y2,border_state,virtual);
+    line(x2,y2,x1,y2,border_state,virtual);
+    line(x1,y2,x1,y1,border_state,virtual);
+
+    if ((filler == 0) || (filler==1))
+    {
+        if (((x2-x1) > 0) || ((y2-y1) > 0))
+        {
+            for (int i = x1+1 ; i < x2; i++)
+            {
+                line(i,y1+1,i,y2-1,filler,virtual);
+            }        
+        }
+    }
 }
 

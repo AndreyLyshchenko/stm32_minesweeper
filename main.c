@@ -6,9 +6,12 @@
 #include "StaticLib/spi.h"
 #include "StaticLib/display.h"
 #include "StaticLib/configuration.h"
+#include "StaticLib/game.h"
 
 extern uint8_t Bit_map[128][8];
 void toggle_led(void);
+static int  posx;
+static int posy;
 
 
 
@@ -34,33 +37,12 @@ int __attribute((noreturn)) main(void)
 		// but 128x64 real
 
 		display_fill(0x00);
-		put_pixel(0,0,1,VIRTUAL);
-		put_pixel(0,63,1,VIRTUAL);
-		put_pixel(127,0,1,VIRTUAL);
-		put_pixel(127,63,1,VIRTUAL);
-		draw_changes();
+		draw_board();
+		select_tile(9,4);
+		draw_mine(9,4);
 
-		int x = 0;
-		int y = 0;
-		int state = 1;
-		while (1)
-		{
-			while (1)
-			{
-				if (x<127) {x++;}
-				else if (y<63){y++;}
-				else {break;}
-				line(63,31,x,y,state,REAL);
-			}
-			while (1)
-			{
-				if (x>0) {x--;}
-				else if (y>0){y--;}
-				else {break;}
-				line(63,31,x,y,state,REAL);
-			}	
-			if (state==1){state = 0;} else {state=1;}
-		}
+		posx=9;
+		posy=4;
 		
 
 
@@ -117,20 +99,24 @@ void ButtonClick_A_8_Down()
 
 void ButtonClick_B_12_Down()
 {	
-	toggle_led();
+	posy--;
+	select_tile(posx,posy);
 }
 
 void ButtonClick_B_13_Down()
 {	
-	toggle_led();
+	posy++;
+	select_tile(posx,posy);
 }
 void ButtonClick_B_14_Down()
 {	
-	toggle_led();
+	posx--;
+	select_tile(posx,posy);
 }
 void ButtonClick_B_15_Down()
 {	
-	toggle_led();
+	posx++;
+	select_tile(posx,posy);
 }
 
 void toggle_led()
