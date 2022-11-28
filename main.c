@@ -9,6 +9,7 @@
 #include "StaticLib/game.h"
 
 extern uint8_t Bit_map[128][8];
+extern uint8_t Board[128][8];
 void toggle_led(void);
 static int  posx;
 static int posy;
@@ -38,11 +39,15 @@ int __attribute((noreturn)) main(void)
 
 		display_fill(0x00);
 		draw_board();
-		select_tile(9,4);
-		draw_mine(9,4);
+		copy_map(Board,Bit_map);
+		//draw_question_mark(0,0);
+		//draw_flag(0,0);
+		select_tile(0,0);
+		draw_changes();
 
-		posx=9;
-		posy=4;
+
+		posx=0;
+		posy=0;
 		
 
 
@@ -94,7 +99,10 @@ void TIM2_IRQHandler(void)
 
 void ButtonClick_A_8_Down()
 {
-	toggle_led();
+	draw_mine(posx,posy);
+	copy_map(Board,Bit_map);
+	select_tile(posx,posy);
+
 }
 
 void ButtonClick_B_12_Down()

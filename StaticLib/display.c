@@ -1,7 +1,10 @@
 #include "display.h"
 
-static uint8_t Bit_map[128][8];
-static uint16_t Page_queue[QUEUE_LENGTH];
+uint8_t Bit_map[128][8];
+uint8_t Board[128][8];
+uint8_t Game_UI[128][8];
+uint8_t Menu_UI[128][8];
+uint16_t Page_queue[QUEUE_LENGTH];
 
 ///@param filler 8-bit vertical pattern, most significant bit is a physically lower one
 void display_fill(uint8_t filler)
@@ -251,3 +254,53 @@ void rectangle(int x1,int y1, int x2, int y2, uint8_t border_state, uint8_t fill
     }
 }
 
+void copy_map(uint8_t  array_a[128][8], uint8_t  array_b[128][8])
+{
+    for (int i = 0; i < 128; i++)
+    {
+        for (int j = 0; j < 8; j++)
+        {
+            array_a[i][j] = array_b[i][j];
+        }
+    }
+}
+
+void load_map(uint8_t  array_a[128][8], uint8_t  array_b[128][8])
+{
+    for (int i = 0; i < QUEUE_LENGTH; i++)
+    {
+        if (Page_queue[i] != 0)
+        {
+            Page_queue[i]=0;
+        } 
+            else
+            {
+                break;
+            }
+    }
+    for (uint8_t i = 0; i < 128; i++)
+    {
+        for (int j = 0; j < 8; j++)
+        {
+            //if (array_a[i][j] != array_b[i][j])
+            {
+                GPIOA->BSRR = GPIO_ODR_ODR4 << 16U; // Selecting display (CS=0) 
+                GPIOA->BSRR = GPIO_ODR_ODR3 << 16U; //Selecting sending of command (A0=0)
+
+                SPI1_Write(0xB0|j);		// Seting page address ((0xb0) command code + (0b0000<=i<=0b0111) page adress)
+
+                SPI1_Write(0x00|(i & 0b00001111));
+                SPI1_Write(0x10|(i>>4));
+
+                while (SPI1->SR & SPI_SR_BSY);
+
+                GPIOA->BSRR = GPIO_ODR_ODR3; // Selecting sending of data
+                SPI1_Write(array_a[i][j]);			 
+                while (SPI1->SR & SPI_SR_BSY);
+
+                GPIOA->BSRR = GPIO_ODR_ODR4; // Ending display selection
+            }    
+            array_a[i][j] = array_b[i][j];
+        }
+    }
+}

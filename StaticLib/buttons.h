@@ -1,3 +1,4 @@
+#ifndef buttons_H
 #define buttons_H
 #define WEAK __attribute__ ((weak))   
 #include <stm32f10x.h>
@@ -207,3 +208,4 @@ void WEAK ButtonClick_C_15_Down();
 void WEAK ButtonClick_C_15_Up();
 void WEAK ButtonClick_C_15_Hold();
 
+#endif
