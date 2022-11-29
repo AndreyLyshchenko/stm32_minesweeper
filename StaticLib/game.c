@@ -1,5 +1,15 @@
 #include "game.h"
 
+void (*pictograms[5])(uint8_t,uint8_t);
+
+void inicialise_pictogramm_array(void)
+{
+    pictograms[0]=draw_mine;
+    pictograms[1]=draw_flag;
+    pictograms[2]=draw_question_mark;
+    pictograms[3]=draw_ok;
+    pictograms[4]=draw_empty_tile;
+}
 
 void draw_board(void)
 {
@@ -12,7 +22,7 @@ void draw_board(void)
                 BOARD_START_Y+(j*TILE_SIDE),
                 BOARD_START_X+((i+1)*TILE_SIDE-1),
                 BOARD_START_Y+((j+1)*TILE_SIDE-1),
-                0,1,VIRTUAL);
+            0,1,VIRTUAL);
         }
     }
     rectangle(
@@ -182,3 +192,42 @@ void select_mode(uint8_t x_number, uint8_t y_number)
     draw_changes();
 }
 
+void draw_ok(uint8_t x_number, uint8_t y_number)
+{
+    int setx = BOARD_START_X+3;
+    int sety = BOARD_START_Y+3;
+    setx += TILE_SIDE * x_number;
+    sety += TILE_SIDE * y_number;
+
+    put_pixel(setx+4,sety+1,0,VIRTUAL);
+
+    put_pixel(setx+3,sety+2,0,VIRTUAL);
+
+    put_pixel(setx+0,sety+3,0,VIRTUAL);
+    put_pixel(setx+2,sety+3,0,VIRTUAL);
+
+    put_pixel(setx+1,sety+4,0,VIRTUAL);
+
+}
+
+void draw_back(uint8_t x_number, uint8_t y_number)
+{
+    int setx = BOARD_START_X+3;
+    int sety = BOARD_START_Y+3;
+    setx += TILE_SIDE * x_number;
+    sety += TILE_SIDE * y_number;
+
+    put_pixel(setx+0,sety+0,0,VIRTUAL);
+    put_pixel(setx+4,sety+0,0,VIRTUAL);
+
+    put_pixel(setx+1,sety+1,0,VIRTUAL);
+    put_pixel(setx+3,sety+1,0,VIRTUAL);
+    
+    put_pixel(setx+2,sety+2,0,VIRTUAL);
+
+    put_pixel(setx+1,sety+3,0,VIRTUAL);
+    put_pixel(setx+3,sety+3,0,VIRTUAL);
+
+    put_pixel(setx+0,sety+4,0,VIRTUAL);
+    put_pixel(setx+4,sety+4,0,VIRTUAL);  
+}
