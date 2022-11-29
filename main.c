@@ -13,7 +13,9 @@ extern uint8_t Board[128][8];
 void toggle_led(void);
 static int  posx;
 static int posy;
+bool select_mode_enabled; 
 
+void dummy(uint8_t x_number, uint8_t y_number);
 
 
 bool ToggleLED; // Adding global variable, which control LED light toggling
@@ -26,6 +28,7 @@ int __attribute((noreturn)) main(void)
 
 
 	ToggleLED = false;
+	select_mode_enabled = false;
 	GPIOC->ODR |= 1 << 13; // Disabling LED by default
 	bool Mid_state, Up_state, Down_state;
 	uint16_t Current_PSC_value;
@@ -79,52 +82,70 @@ void TIM2_IRQHandler(void)
 {
 	if (TIM2->SR & TIM_SR_UIF) // True if Update Interrupt Flag is set
 	{
-		if (ToggleLED)
+		if (select_mode_enabled)
 		{
-			uint32_t _gpios = GPIOC->ODR;
-			GPIOC->BSRR = (~_gpios & (1 << 13)); // Toggling LED light
+			select_mode(posx,posy);
 		}
 		TIM2->SR &= ~TIM_SR_UIF; // Clearing UIF flag
 	}
-	if (TIM2->SR & TIM_SR_CC1IF)
+
+}
+
+void ButtonClick_A_8_Down() //mid
+{
+	if (select_mode_enabled)
 	{
-		if (ToggleLED) 
-		{
-			uint32_t _gpios = GPIOC->ODR;
-			GPIOC->BSRR = ((_gpios & (1 << 13)) << 16); // Toggling LED light
-		}
-		TIM2->SR &= ~TIM_SR_CC1IF; //Clearing Count compare interrupt flag
+		draw_default_tile_borders(posx,posy);
+		draw_changes();
+		copy_map(Board,Bit_map);
+		select_tile(posx,posy);
+		
+	} else
+	{
+		draw_flag(posx,posy);
+	}
+	select_mode_enabled = !select_mode_enabled;
+
+
+}
+
+void ButtonClick_B_12_Down() //up
+{	
+	if (!select_mode_enabled)
+	{
+		posy--;
+		select_tile(posx,posy);
 	}
 }
 
-void ButtonClick_A_8_Down()
-{
-	draw_mine(posx,posy);
-	copy_map(Board,Bit_map);
-	select_tile(posx,posy);
-
-}
-
-void ButtonClick_B_12_Down()
+void ButtonClick_B_13_Down() //down
 {	
-	posy--;
-	select_tile(posx,posy);
+	if (!select_mode_enabled)
+	{
+		posy++;
+		select_tile(posx,posy);
+	}	
 }
-
-void ButtonClick_B_13_Down()
+void ButtonClick_B_14_Down() //left
 {	
-	posy++;
-	select_tile(posx,posy);
+	if (!select_mode_enabled)
+	{
+		posx--;
+		select_tile(posx,posy);
+	}	
+	else
+	{
+		draw_empty_tile(posx,posy);
+		draw_changes();
+	}
 }
-void ButtonClick_B_14_Down()
+void ButtonClick_B_15_Down() //right
 {	
-	posx--;
-	select_tile(posx,posy);
-}
-void ButtonClick_B_15_Down()
-{	
-	posx++;
-	select_tile(posx,posy);
+	if (!select_mode_enabled)
+	{
+		posx++;
+		select_tile(posx,posy);
+	}	
 }
 
 void toggle_led()
@@ -140,3 +161,22 @@ void toggle_led()
 	}
 }
 
+void dummy(uint8_t x_number, uint8_t y_number)
+{
+	static int color =0;
+    rectangle(
+        BOARD_START_X + (TILE_SIDE * x_number),
+        BOARD_START_Y + (TILE_SIDE * y_number),
+        BOARD_START_X + (TILE_SIDE * (x_number+1)-1),
+        BOARD_START_Y + (TILE_SIDE * (y_number+1)-1),
+    !color,3,VIRTUAL);
+
+    rectangle(
+        BOARD_START_X+(TILE_SIDE * x_number)+1,
+        BOARD_START_Y+(TILE_SIDE * y_number)+1,
+        BOARD_START_X+(TILE_SIDE * (x_number+1)-2),
+        BOARD_START_Y+(TILE_SIDE * (y_number+1)-2),
+    color,3,VIRTUAL);
+	color = !color;
+	//delay_us(10000);
+}

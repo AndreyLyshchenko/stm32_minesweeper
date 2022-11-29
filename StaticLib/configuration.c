@@ -45,10 +45,10 @@ void configuring_timers (void)
 {
 	RCC->APB1RSTR |= RCC_APB1RSTR_TIM2RST;	// Reseting TIM2
 	RCC->APB1RSTR &= ~RCC_APB1RSTR_TIM2RST; //
-	TIM2->PSC = 999U;							// Editing prescaler value (1-65536) to configure timer frequency
-	TIM2->ARR = 1000;						// Editing TIM2 reload value (count to X number)
-	TIM2->CCR1 = 500U;
-	TIM2->DIER |= TIM_DIER_UIE | TIM_DIER_CC1IE; // Enabling "Update" & "CaptureCompare"interrupt
+	//TIM2->PSC = 999U;							// Editing prescaler value (1-65536) to configure timer frequency
+	TIM2->PSC = 65534U;
+	TIM2->ARR = 0b1001111111;			// Editing TIM2 reload value (count to X number)
+	TIM2->DIER |= TIM_DIER_UIE ; 			// Enabling "Update" interrupt
 	NVIC_ClearPendingIRQ(TIM2_IRQn);			 // Clearing pending interuptions for TIM2 ???
 	NVIC_EnableIRQ(TIM2_IRQn);					 // Enabling interuptions from TIM2
 	TIM2->CR1 |= TIM_CR1_CEN;					 // Enabling counter

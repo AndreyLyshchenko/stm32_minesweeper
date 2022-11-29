@@ -40,6 +40,23 @@ void draw_selection(uint8_t x_number, uint8_t y_number)
     0,3,VIRTUAL);
 }
 
+void draw_default_tile_borders(uint8_t x_number, uint8_t y_number)
+{
+    rectangle(
+        BOARD_START_X + (TILE_SIDE * x_number),
+        BOARD_START_Y + (TILE_SIDE * y_number),
+        BOARD_START_X + (TILE_SIDE * (x_number+1)-1),
+        BOARD_START_Y + (TILE_SIDE * (y_number+1)-1),
+    0,3,VIRTUAL);
+
+    rectangle(
+        BOARD_START_X+(TILE_SIDE * x_number)+1,
+        BOARD_START_Y+(TILE_SIDE * y_number)+1,
+        BOARD_START_X+(TILE_SIDE * (x_number+1)-2),
+        BOARD_START_Y+(TILE_SIDE * (y_number+1)-2),
+    1,3,VIRTUAL);
+}
+
 void draw_mine(uint8_t x_number, uint8_t y_number)
 {
     int setx = BOARD_START_X+3;
@@ -98,6 +115,15 @@ void draw_flag(uint8_t x_number, uint8_t y_number)
     put_pixel(setx+4,sety+4,0,VIRTUAL); 
 
 }
+void draw_empty_tile(uint8_t x_number, uint8_t y_number)
+{
+    int setx = BOARD_START_X+3;
+    int sety = BOARD_START_Y+3;
+    setx += TILE_SIDE * x_number;
+    sety += TILE_SIDE * y_number;
+
+    rectangle(setx-1,sety-1,setx+5,sety+5,1,1,VIRTUAL);
+}
 
 void draw_question_mark(uint8_t x_number, uint8_t y_number)
 {
@@ -139,16 +165,20 @@ void select_tile(uint8_t x_number, uint8_t y_number)
 
 void select_mode(uint8_t x_number, uint8_t y_number)
 {
-    //draw_arrows(x_number, y_number);
-    while ((BtnClick('A',8,'D',333,10000)!=7))
-    {
-        rectangle(
-            BOARD_START_X + (TILE_SIDE * x_number),
-            BOARD_START_Y + (TILE_SIDE * y_number),
-            BOARD_START_X + (TILE_SIDE * (x_number+1)-1),
-            BOARD_START_Y + (TILE_SIDE * (y_number+1)-1),
-        0,3,VIRTUAL);
-    }
-    
+    static uint8_t color = 1;
+    color = !color;    
+    rectangle(
+        BOARD_START_X + (TILE_SIDE * x_number),
+        BOARD_START_Y + (TILE_SIDE * y_number),
+        BOARD_START_X + (TILE_SIDE * (x_number+1)-1),
+        BOARD_START_Y + (TILE_SIDE * (y_number+1)-1),
+    color,3,VIRTUAL);
+    rectangle(
+        BOARD_START_X+(TILE_SIDE * x_number)+1,
+        BOARD_START_Y+(TILE_SIDE * y_number)+1,
+        BOARD_START_X+(TILE_SIDE * (x_number+1)-2),
+        BOARD_START_Y+(TILE_SIDE * (y_number+1)-2),
+    0,3,VIRTUAL);
+    draw_changes();
 }
 
