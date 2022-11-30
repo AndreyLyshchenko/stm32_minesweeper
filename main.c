@@ -18,7 +18,7 @@ int posx;
 int posy;
 uint8_t selector;
 bool select_mode_enabled; 
-extern void (*pictograms[5])(uint8_t,uint8_t);
+extern void (*piktograms[5])(uint8_t,uint8_t);
 
 
 
@@ -53,7 +53,7 @@ int __attribute((noreturn)) main(void)
 		//draw_flag(0,0);
 		select_tile(0,0);
 		draw_changes();
-		inicialise_pictogramm_array();
+		inicialise_piktogramm_array();
 		selector = 0;
 
 
@@ -100,7 +100,7 @@ void TIM2_IRQHandler(void)
 
 void ButtonClick_A_8_Down() //mid
 {
-	//pictograms[0](posx,posy);
+	//piktograms[0](posx,posy);
 	if (select_mode_enabled)
 	{
 		draw_default_tile_borders(posx,posy);
@@ -110,7 +110,7 @@ void ButtonClick_A_8_Down() //mid
 		
 	} else
 	{
-		pictograms[selector](posx,posy);
+		piktograms[selector](posx,posy);
 		//draw_flag(posx,posy);
 	}
 	select_mode_enabled = !select_mode_enabled;
@@ -170,10 +170,10 @@ void ButtonClick_B_14_Down() //left
 		}
 		else
 		{
-			selector = 4;
+			selector = (PIKTOGRAMM_ARRAY_LENGTH-1);
 		}
 		draw_empty_tile(posx,posy);
-		pictograms[selector](posx,posy);
+		piktograms[selector](posx,posy);
 		draw_changes();
 	}
 }
@@ -194,7 +194,7 @@ void ButtonClick_B_15_Down() //right
 	}	
 	else
 	{
-		if (selector<4)
+		if (selector<(PIKTOGRAMM_ARRAY_LENGTH-1))
 		{
 			selector++;
 		}
@@ -203,7 +203,7 @@ void ButtonClick_B_15_Down() //right
 			selector = 0;
 		}
 		draw_empty_tile(posx,posy);
-		pictograms[selector](posx,posy);
+		piktograms[selector](posx,posy);
 		draw_changes();
 	}
 }

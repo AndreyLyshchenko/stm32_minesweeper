@@ -32,7 +32,6 @@ int BtnClick(char IO_Port, int IO_Pin, char IO_Mode, uint32_t DefaultDelay, uint
     default:
         ErrCode = 1;
         return ErrCode;
-        break;
     }
 
     if (IO_Pin <= 15 && IO_Pin >=0)
@@ -48,7 +47,6 @@ int BtnClick(char IO_Port, int IO_Pin, char IO_Mode, uint32_t DefaultDelay, uint
     if (ErrCode==0)
     {
         bool IsPressed = Port->IDR & Pin; //0 - Pressed, 1 - Not Pressed
-        //uint32_t CHECK_IDR = Port->IDR,Check_ODR = Port->ODR,Check_CRH=Port->CRH,Check_CRL=Port->CRL;
         if (!IsPressed) 
         {
             switch (IO_Mode)
@@ -91,7 +89,6 @@ int BtnClick(char IO_Port, int IO_Pin, char IO_Mode, uint32_t DefaultDelay, uint
             default:
                 ErrCode = 3;
                 return ErrCode;
-                break;
             }
         }
 
