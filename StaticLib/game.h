@@ -12,6 +12,12 @@
     #define Y_TILE_COUNT 5
     #define PIKTOGRAMM_ARRAY_LENGTH 5
 
+    #define CL_BLACK 0
+    #define CL_WHITE 1
+    #define FILL_BLACK 0
+    #define FILL_WHITE 1
+    #define NO_FILL 3
+
     extern uint8_t Board[128][8];
     extern uint8_t Game_UI[128][8];
     extern uint8_t Bit_map[128][8];

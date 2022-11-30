@@ -49,17 +49,10 @@ int __attribute((noreturn)) main(void)
 		display_fill(0x00);
 		draw_board();
 		copy_map(Board,Bit_map);
-		//draw_question_mark(0,0);
-		//draw_flag(0,0);
 		select_tile(0,0);
 		draw_changes();
 		inicialise_piktogramm_array();
 		selector = 0;
-
-
-
-		
-
 
 		// All "button press" events organized in hierarchial order because of their mutual exclusiveness
 
@@ -72,11 +65,11 @@ int __attribute((noreturn)) main(void)
 
 		while (1)
 		{
-			if (BtnClick('A',8,'D',333,10000)==7){} // MID BUTTON	
-			else if (BtnClick('B',12,'D',333,10000)==7){} // UP BUTTON
-				else if (BtnClick('B',13,'D',333,10000)==7){} // DOWN BUTTON
-					else if (BtnClick('B',14,'D',333,10000)==7){} // LEFT BUTTON
-						else if (BtnClick('B',15,'D',333,10000)==7){} // RIGHT BUTTON
+			if (BtnClick('A',8,'D',10000,10000)==7){} // MID BUTTON	
+			else if (BtnClick('B',12,'D',10000,10000)==7){} // UP BUTTON
+				else if (BtnClick('B',13,'D',10000,10000)==7){} // DOWN BUTTON
+					else if (BtnClick('B',14,'D',10000,10000)==7){} // LEFT BUTTON
+						else if (BtnClick('B',15,'D',10000,10000)==7){} // RIGHT BUTTON
 							else
 							{
 								delay_us(333); // NOTHING
@@ -85,13 +78,14 @@ int __attribute((noreturn)) main(void)
 	}
 }
 
+/// @brief Update interrupt handler
 void TIM2_IRQHandler(void)
 {
 	if (TIM2->SR & TIM_SR_UIF) // True if Update Interrupt Flag is set
 	{
-		if (select_mode_enabled)
+		if (select_mode_enabled) 
 		{
-			select_mode(posx,posy);
+			select_mode(posx,posy); 
 		}
 		TIM2->SR &= ~TIM_SR_UIF; // Clearing UIF flag
 	}
@@ -100,7 +94,6 @@ void TIM2_IRQHandler(void)
 
 void ButtonClick_A_8_Down() //mid
 {
-	//piktograms[0](posx,posy);
 	if (select_mode_enabled)
 	{
 		draw_default_tile_borders(posx,posy);

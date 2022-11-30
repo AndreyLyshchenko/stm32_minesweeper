@@ -54,7 +54,7 @@ void put_pixel(uint8_t x, uint8_t y, uint8_t state, uint8_t virtual)
             {
                 Bit_map[x][page_number] |=page_pos; 
             }
-        if (!virtual)
+        if (!virtual)   // Drawing right now
         {
             x_up = x >> 4;          // Splitting column address between two address registers
             x_low = x & 0b00001111; // 
@@ -70,13 +70,15 @@ void put_pixel(uint8_t x, uint8_t y, uint8_t state, uint8_t virtual)
             while (SPI1->SR & SPI_SR_BSY);
 
             GPIOA->BSRR = GPIO_ODR_ODR3; // Selecting sending of data
-            SPI1_Write(Bit_map[x][page_number]);			 // Turning off pixels
+            SPI1_Write(Bit_map[x][page_number]);	// Drawin page on display
             while (SPI1->SR & SPI_SR_BSY);
 
             GPIOA->BSRR = GPIO_ODR_ODR4; // Ending display selection
         }
             else 
             {
+                // Putting info about page into the queue (to draw page later on)
+                // This info contains X and Y page coordinates + special marker 
                 uint16_t page_flag = 0;
                 page_flag |= x<<3;
                 page_flag |= page_number;
@@ -85,8 +87,8 @@ void put_pixel(uint8_t x, uint8_t y, uint8_t state, uint8_t virtual)
                 {
                     if (Page_queue[i] != 0)
                     {
-                        if (Page_queue[i] == page_flag)
-                        {
+                        if (Page_queue[i] == page_flag) // There is no need to mark this page for drawing
+                        {                               // if we already done this before
                             break;
                         }
                     } 
@@ -99,7 +101,8 @@ void put_pixel(uint8_t x, uint8_t y, uint8_t state, uint8_t virtual)
             }
     } 
 }
- 
+
+///@brief Drawing marked pages  
 void draw_changes(void)
 {
     if (Page_queue[0]!=0)
@@ -107,7 +110,7 @@ void draw_changes(void)
         GPIOA->BSRR = GPIO_ODR_ODR4 << 16U; // Selecting display (CS=0) 
         for (uint16_t i = 0; i < QUEUE_LENGTH; i++)
         {
-            if (Page_queue[i]!=0)
+            if (Page_queue[i]!=0) // If we have something to draw
             {
                 GPIOA->BSRR = GPIO_ODR_ODR3 << 16U; //Selecting sending of command (A0=0)
 
@@ -125,7 +128,7 @@ void draw_changes(void)
                 while (SPI1->SR & SPI_SR_BSY);
 
                 GPIOA->BSRR = GPIO_ODR_ODR3; // Selecting sending of data
-                SPI1_Write(Bit_map[column_number][page_number]);			 // Turning off pixels
+                SPI1_Write(Bit_map[column_number][page_number]);			 // Drawing page
                 while (SPI1->SR & SPI_SR_BSY); 
 
                 Page_queue[i]=0;   
@@ -148,7 +151,16 @@ void line(int x1, int y1, int x2, int y2, uint8_t state, uint8_t virtual)
     int deltay = abs(y2 - y1);
     
     int error = 0;
-    
+    // While using Bresenham's line algorithm we need to ceep in mind 8 cases:
+    // *      II    *    III    *
+    //   I  *       *       *  IV
+    //          *       *
+    // *    *   *   *   *   *   *
+    //   VIII   *       *   V
+    //      *  VII  *    VI *
+    // *            *           *
+
+
     if (deltax>=deltay)
         {
         if (x1>x2)
@@ -220,6 +232,9 @@ void line(int x1, int y1, int x2, int y2, uint8_t state, uint8_t virtual)
  
 }
 
+/// @param border_state 0 - black, 1 - white 
+/// @param filler 0 - black, 1 - white, everything else - no fill
+/// @param virtual  if 0 - line will be drawn immediately 
 void rectangle(int x1,int y1, int x2, int y2, uint8_t border_state, uint8_t filler,  uint8_t virtual)
 {
     if (x1>x2)
@@ -254,6 +269,7 @@ void rectangle(int x1,int y1, int x2, int y2, uint8_t border_state, uint8_t fill
     }
 }
 
+/// @brief Copying bitmap from array_b to array_a WITHOUT redrawing of screen
 void copy_map(uint8_t  array_a[128][8], uint8_t  array_b[128][8])
 {
     for (int i = 0; i < 128; i++)
@@ -265,9 +281,10 @@ void copy_map(uint8_t  array_a[128][8], uint8_t  array_b[128][8])
     }
 }
 
+/// @brief Copying bitmap from array_b to array_a WITH redrawing of screen
 void load_map(uint8_t  array_a[128][8], uint8_t  array_b[128][8])
 {
-    for (int i = 0; i < QUEUE_LENGTH; i++)
+    for (int i = 0; i < QUEUE_LENGTH; i++) // Unimplemented changes are no longer our concern
     {
         if (Page_queue[i] != 0)
         {
@@ -282,7 +299,6 @@ void load_map(uint8_t  array_a[128][8], uint8_t  array_b[128][8])
     {
         for (int j = 0; j < 8; j++)
         {
-            //if (array_a[i][j] != array_b[i][j])
             {
                 GPIOA->BSRR = GPIO_ODR_ODR4 << 16U; // Selecting display (CS=0) 
                 GPIOA->BSRR = GPIO_ODR_ODR3 << 16U; //Selecting sending of command (A0=0)
