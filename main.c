@@ -13,12 +13,15 @@
 
 extern uint8_t Bit_map[128][8];
 extern uint8_t Board[128][8];
+extern uint8_t tile_check_flag;
 void toggle_led(void);
 int posx;
 int posy;
 uint8_t selector;
 bool select_mode_enabled; 
 extern void (*piktograms[5])(uint8_t,uint8_t);
+extern uint8_t mine_field[X_TILE_COUNT][Y_TILE_COUNT];
+extern uint8_t how_many_mines_around[X_TILE_COUNT][Y_TILE_COUNT];
 
 
 
@@ -53,6 +56,9 @@ int __attribute((noreturn)) main(void)
 		draw_changes();
 		inicialise_piktogramm_array();
 		selector = 0;
+
+		spawn_mines(mine_field);
+		calculate_how_many_mines_around(mine_field,how_many_mines_around);
 
 		// All "button press" events organized in hierarchial order because of their mutual exclusiveness
 
@@ -97,14 +103,34 @@ void ButtonClick_A_8_Down() //mid
 	if (select_mode_enabled)
 	{
 		draw_default_tile_borders(posx,posy);
-		draw_changes();
+		//draw_changes();
 		copy_map(Board,Bit_map);
+		load_map(Bit_map,Board);
 		select_tile(posx,posy);
+
+		if (tile_check_flag == 1)
+		{
+			if (how_many_mines_around[posx][posy]==9)
+			{
+				game_over();
+			}
+			else 
+			{
+				draw_empty_tile(posx,posy);
+				draw_number(posx,posy,how_many_mines_around[posx][posy]);
+				//delay_us(10000);
+				//draw_changes();
+				copy_map(Board,Bit_map);
+				load_map(Bit_map,Board);
+				select_tile(posx,posy);
+				//draw_changes();
+			}
+		}
+		
 		
 	} else
 	{
 		piktograms[selector](posx,posy);
-		//draw_flag(posx,posy);
 	}
 	select_mode_enabled = !select_mode_enabled;
 

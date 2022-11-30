@@ -4,6 +4,7 @@
     #include <stm32f10x.h>
     #include "display.h"
     #include "buttons.h"
+    #include <stdbool.h>
 
     #define TILE_SIDE 11
     #define BOARD_START_X 3
@@ -35,5 +36,10 @@
     void select_mode(uint8_t x_number, uint8_t y_number);
     void draw_ok(uint8_t x_number, uint8_t y_number);
     void draw_back(uint8_t x_number, uint8_t y_number);
+    void spawn_mines(uint8_t  mine_field[X_TILE_COUNT][Y_TILE_COUNT]);
+    void calculate_how_many_mines_around
+    (uint8_t  mine_field[X_TILE_COUNT][Y_TILE_COUNT],uint8_t  how_many_mines_around[X_TILE_COUNT][Y_TILE_COUNT]);
+    void game_over(void);
+    void draw_number(uint8_t x_number, uint8_t y_number, uint8_t mine_count);
 
 #endif
