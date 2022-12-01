@@ -11,7 +11,7 @@
     #define BOARD_START_Y 4
     #define X_TILE_COUNT 11
     #define Y_TILE_COUNT 5
-    #define PIKTOGRAMM_ARRAY_LENGTH 5
+    #define PIKTOGRAMM_ARRAY_LENGTH 4
 
     #define CL_BLACK 0
     #define CL_WHITE 1
@@ -24,6 +24,7 @@
     extern uint8_t Bit_map[128][8];
 
     void inicialise_piktogramm_array(void);
+    void inicialise_tile_memory(void);
     void draw_board(void);
     void draw_selection (uint8_t x_number, uint8_t y_number);
     void draw_default_tile_borders(uint8_t x_number, uint8_t y_number);
