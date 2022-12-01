@@ -2,6 +2,7 @@
 
 uint8_t mine_field[X_TILE_COUNT][Y_TILE_COUNT]; // if 0 - tile containing no mines, 1 - tile containing a mine
 uint8_t how_many_mines_around[X_TILE_COUNT][Y_TILE_COUNT]; // X(0..8) mines placed around tile
+uint8_t tile_memory[X_TILE_COUNT][Y_TILE_COUNT]; // Contains info about previously held pictogram 
 uint8_t tile_check_flag; // This flag is used to tell the programm that we are going to open a tile
 
 void (*piktograms[PIKTOGRAMM_ARRAY_LENGTH])(uint8_t,uint8_t);
@@ -9,11 +10,22 @@ void (*piktograms[PIKTOGRAMM_ARRAY_LENGTH])(uint8_t,uint8_t);
 /// @brief Initialising array of pointers on functions, wich used for drawing graphical primitives
 void inicialise_piktogramm_array(void)
 {
-    piktograms[0]=draw_mine;
-    piktograms[1]=draw_flag;
-    piktograms[2]=draw_question_mark;
-    piktograms[3]=draw_ok;
-    piktograms[4]=draw_empty_tile;
+    //piktograms[0]=draw_mine;
+    piktograms[0]=draw_flag;
+    piktograms[1]=draw_question_mark;
+    piktograms[2]=draw_ok;
+    piktograms[3]=draw_empty_tile;
+}
+
+void inicialise_tile_memory(void)
+{
+    for (uint8_t x = 0; x < X_TILE_COUNT; x++)
+    {
+        for (uint8_t y = 0; y < Y_TILE_COUNT; y++)
+        {
+            tile_memory[x][y] = 0;
+        }
+    }
 }
 
 
@@ -188,8 +200,8 @@ void draw_arrows(uint8_t x_number, uint8_t y_number)
 
 void select_tile(uint8_t x_number, uint8_t y_number)
 {
-    draw_selection(x_number,y_number);
     load_map(Bit_map,Board);
+    draw_selection(x_number,y_number);
 
 }
 
@@ -362,7 +374,22 @@ void calculate_how_many_mines_around
 
 void game_over(void)
 {
-    //display_fill(0XFF);
+    for (uint8_t x = 0; x < X_TILE_COUNT; x++)
+    {
+        for (uint8_t y = 0; y < Y_TILE_COUNT; y++)
+        {
+            draw_empty_tile(x,y);
+            if (how_many_mines_around[x][y]==9)
+            {
+                draw_mine(x,y);
+            }
+            else
+            {
+                draw_number(x,y,how_many_mines_around[x][y]);
+            }
+        }
+    }
+    draw_changes();
 }
 
 void draw_number(uint8_t x_number, uint8_t y_number, uint8_t mine_count)

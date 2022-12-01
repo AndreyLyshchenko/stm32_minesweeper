@@ -22,7 +22,7 @@ bool select_mode_enabled;
 extern void (*piktograms[5])(uint8_t,uint8_t);
 extern uint8_t mine_field[X_TILE_COUNT][Y_TILE_COUNT];
 extern uint8_t how_many_mines_around[X_TILE_COUNT][Y_TILE_COUNT];
-
+extern uint8_t tile_memory[X_TILE_COUNT][Y_TILE_COUNT];
 
 
 bool ToggleLED; // Adding global variable, which control LED light toggling
@@ -55,6 +55,7 @@ int __attribute((noreturn)) main(void)
 		select_tile(0,0);
 		draw_changes();
 		inicialise_piktogramm_array();
+		inicialise_tile_memory();
 		selector = 0;
 
 		spawn_mines(mine_field);
@@ -100,39 +101,45 @@ void TIM2_IRQHandler(void)
 
 void ButtonClick_A_8_Down() //mid
 {
-	if (select_mode_enabled)
+	if (tile_memory[posx][posy]!=PIKTOGRAMM_ARRAY_LENGTH) // Preventing interactions with already opend tile
 	{
-		draw_default_tile_borders(posx,posy);
-		//draw_changes();
-		copy_map(Board,Bit_map);
-		load_map(Bit_map,Board);
-		select_tile(posx,posy);
-
-		if (tile_check_flag == 1)
+		if (select_mode_enabled)
 		{
-			if (how_many_mines_around[posx][posy]==9)
+
+			if (tile_check_flag == 1)
 			{
-				game_over();
+				if (how_many_mines_around[posx][posy]==9)
+				{
+					game_over();
+				}
+				else 
+				{
+					draw_empty_tile(posx,posy);
+					draw_default_tile_borders(posx,posy);
+					draw_number(posx,posy,how_many_mines_around[posx][posy]);
+					tile_memory[posx][posy] = PIKTOGRAMM_ARRAY_LENGTH; // Marking tile as opend (to prevent modifing manually)
+					copy_map(Board,Bit_map);
+					draw_selection(posx,posy);
+					draw_changes();
+					select_mode_enabled = !select_mode_enabled;
+					return;
+				}
 			}
-			else 
-			{
-				draw_empty_tile(posx,posy);
-				draw_number(posx,posy,how_many_mines_around[posx][posy]);
-				//delay_us(10000);
-				//draw_changes();
-				copy_map(Board,Bit_map);
-				load_map(Bit_map,Board);
-				select_tile(posx,posy);
-				//draw_changes();
-			}
+			draw_default_tile_borders(posx,posy);
+			copy_map(Board,Bit_map);
+			draw_selection(posx,posy);
+			draw_changes();	
+			
+		} else
+		{
+			draw_empty_tile(posx,posy);
+			selector=tile_memory[posx][posy];
+			piktograms[selector](posx,posy);
+			draw_selection(posx,posy);
+			draw_changes();
 		}
-		
-		
-	} else
-	{
-		piktograms[selector](posx,posy);
+		select_mode_enabled = !select_mode_enabled;
 	}
-	select_mode_enabled = !select_mode_enabled;
 
 }
 
@@ -149,6 +156,7 @@ void ButtonClick_B_12_Down() //up
 			posy = Y_TILE_COUNT - 1;
 		}
 		select_tile(posx,posy);
+		draw_changes();
 	}
 }
 
@@ -165,6 +173,7 @@ void ButtonClick_B_13_Down() //down
 			posy = 0;
 		}
 		select_tile(posx,posy);
+		draw_changes();
 	}	
 }
 void ButtonClick_B_14_Down() //left
@@ -180,6 +189,7 @@ void ButtonClick_B_14_Down() //left
 			posx = X_TILE_COUNT-1;
 		}
 		select_tile(posx,posy);
+		draw_changes();
 	}	
 	else
 	{
@@ -192,6 +202,7 @@ void ButtonClick_B_14_Down() //left
 			selector = (PIKTOGRAMM_ARRAY_LENGTH-1);
 		}
 		draw_empty_tile(posx,posy);
+		tile_memory[posx][posy] = selector;
 		piktograms[selector](posx,posy);
 		draw_changes();
 	}
@@ -210,6 +221,7 @@ void ButtonClick_B_15_Down() //right
 		}
 
 		select_tile(posx,posy);
+		draw_changes();
 	}	
 	else
 	{
@@ -222,6 +234,7 @@ void ButtonClick_B_15_Down() //right
 			selector = 0;
 		}
 		draw_empty_tile(posx,posy);
+		tile_memory[posx][posy] = selector;
 		piktograms[selector](posx,posy);
 		draw_changes();
 	}

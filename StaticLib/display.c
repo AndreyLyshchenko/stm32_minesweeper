@@ -311,7 +311,7 @@ void load_map(uint8_t  array_a[128][8], uint8_t  array_b[128][8])
                 while (SPI1->SR & SPI_SR_BSY);
 
                 GPIOA->BSRR = GPIO_ODR_ODR3; // Selecting sending of data
-                SPI1_Write(array_a[i][j]);			 
+                SPI1_Write(array_b[i][j]);			 
                 while (SPI1->SR & SPI_SR_BSY);
 
                 GPIOA->BSRR = GPIO_ODR_ODR4; // Ending display selection
