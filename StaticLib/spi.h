@@ -2,6 +2,7 @@
     #define spi_H
     #include <stm32f10x.h>
 
+    void preconfigure_SPI(void);
     void SPI1_Init(void);
     void SPI1_Preset(void);
     void SPI1_Write(uint8_t data);

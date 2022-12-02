@@ -1,5 +1,11 @@
 #include "configuration.h"
 
+void preconfigure_microcontroller(void)
+{
+	enabling_clocks();
+	configuring_ports();
+	configuring_timers();
+}
 
 void enabling_clocks(void) 
 {
@@ -39,6 +45,8 @@ void configuring_ports (void)
 	GPIOA->CRH |= GPIO_CRH_CNF8_1; //	
 	GPIOA->CRH &= ~GPIO_CRH_MODE8; //
 	GPIOA->ODR |= GPIO_ODR_ODR8;   //
+
+	GPIOC->ODR |= 1 << 13; // Disabling LED by default
 }
 
 void configuring_timers (void)

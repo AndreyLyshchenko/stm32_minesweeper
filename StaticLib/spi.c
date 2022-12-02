@@ -1,6 +1,12 @@
 #include "spi.h"
 #include "delay.h"
 
+void preconfigure_SPI(void)
+{
+    SPI1_Init();
+	SPI1_Preset();    
+}
+
 void SPI1_Init(void)
 {
     //Включаем тактирование SPI1 и GPIOA

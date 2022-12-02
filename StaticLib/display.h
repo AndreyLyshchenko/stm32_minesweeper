@@ -7,6 +7,9 @@
     #define VIRTUAL 1
     #define REAL 0
     #define QUEUE_LENGTH 1024
+    #define DISPLAY_HEIGHT 64
+    #define DISPLAY_WIDTH 128
+    #define DISPLAY_PAGE_COUNT 8
 
 
     void display_fill(uint8_t filler);
@@ -16,5 +19,6 @@
     void rectangle(int x1,int y1, int x2, int y2, uint8_t border_state, uint8_t filler,  uint8_t virtual);
     void copy_map(uint8_t  array_a[128][8], uint8_t  array_b[128][8]);
     void load_map(uint8_t  array_a[128][8], uint8_t  array_b[128][8]);
+   void load_image_from_array(uint8_t *image, uint8_t top_left_x, uint8_t top_left_y, uint8_t bottom_right_x, uint8_t bottom_right_y);
 
 #endif

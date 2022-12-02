@@ -11,7 +11,7 @@ void display_fill(uint8_t filler)
 {
     uint8_t page_number =0b000; //0b111 (7) max
     GPIOA->BSRR = GPIO_ODR_ODR4 << 16U; // Selecting display (CS=0) 
-    for (uint8_t i = 0; i < 8; i++)
+    for (uint8_t i = 0; i < DISPLAY_PAGE_COUNT; i++)
     {
         page_number = i;
         GPIOA->BSRR = GPIO_ODR_ODR3 << 16U; //Selecting sending of command (A0=0)
@@ -23,7 +23,7 @@ void display_fill(uint8_t filler)
         while (SPI1->SR & SPI_SR_BSY);  
         uint8_t x_pos = 0b00000000; //0b01111111 (128) max
 
-        for(uint8_t j = 0; j < 128; j++)
+        for(uint8_t j = 0; j < DISPLAY_WIDTH; j++)
         {
             x_pos=j;
             GPIOA->BSRR = GPIO_ODR_ODR3; // Selecting sending of data
@@ -272,9 +272,9 @@ void rectangle(int x1,int y1, int x2, int y2, uint8_t border_state, uint8_t fill
 /// @brief Copying bitmap from array_b to array_a WITHOUT redrawing of screen
 void copy_map(uint8_t  array_a[128][8], uint8_t  array_b[128][8])
 {
-    for (int i = 0; i < 128; i++)
+    for (int i = 0; i < DISPLAY_WIDTH; i++)
     {
-        for (int j = 0; j < 8; j++)
+        for (int j = 0; j < DISPLAY_PAGE_COUNT; j++)
         {
             array_a[i][j] = array_b[i][j];
         }
@@ -295,9 +295,9 @@ void load_map(uint8_t  array_a[128][8], uint8_t  array_b[128][8])
                 break;
             }
     }
-    for (uint8_t i = 0; i < 128; i++)
+    for (uint8_t i = 0; i < DISPLAY_WIDTH; i++)
     {
-        for (int j = 0; j < 8; j++)
+        for (int j = 0; j < DISPLAY_PAGE_COUNT; j++)
         {
             {
                 GPIOA->BSRR = GPIO_ODR_ODR4 << 16U; // Selecting display (CS=0) 
@@ -317,6 +317,21 @@ void load_map(uint8_t  array_a[128][8], uint8_t  array_b[128][8])
                 GPIOA->BSRR = GPIO_ODR_ODR4; // Ending display selection
             }    
             array_a[i][j] = array_b[i][j];
+        }
+    }
+}
+
+
+/// @image Array must be uint8_t (char) type and have folloving structure: 
+/// For image[8][2] = {1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,}:
+/// Array must be organized as:  Array[] = {0xF0, 0x0F};
+void load_image_from_array(uint8_t *image, uint8_t top_left_x, uint8_t top_left_y, uint8_t bottom_right_x, uint8_t bottom_right_y)
+{
+    for (uint8_t y = top_left_y; y < (bottom_right_y+1); y++)
+    { 
+        for (uint8_t x = top_left_x; x < (bottom_right_x+1); x++)
+        {
+            put_pixel(x,y, (0b10000000 & (*(image + (x/8)+(y*16)) << (x%8)))>>7,VIRTUAL);
         }
     }
 }

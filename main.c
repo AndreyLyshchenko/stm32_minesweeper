@@ -14,74 +14,32 @@
 extern uint8_t Bit_map[128][8];
 extern uint8_t Board[128][8];
 extern uint8_t tile_check_flag;
-void toggle_led(void);
 int posx;
 int posy;
 uint8_t selector;
 bool select_mode_enabled; 
+extern bool game_started;
 extern void (*piktograms[5])(uint8_t,uint8_t);
 extern uint8_t mine_field[X_TILE_COUNT][Y_TILE_COUNT];
 extern uint8_t how_many_mines_around[X_TILE_COUNT][Y_TILE_COUNT];
 extern uint8_t tile_memory[X_TILE_COUNT][Y_TILE_COUNT];
+extern uint8_t menu_title_map[128*8];
 
-
-bool ToggleLED; // Adding global variable, which control LED light toggling
 
 int __attribute((noreturn)) main(void)
 {
-	enabling_clocks();
-	configuring_ports();
-	configuring_timers();
-
-
-	ToggleLED = false;
+	preconfigure_microcontroller();
+	preconfigure_SPI();
 	select_mode_enabled = false;
-	GPIOC->ODR |= 1 << 13; // Disabling LED by default
-	bool Mid_state, Up_state, Down_state;
-	uint16_t Current_PSC_value;
 
 
-	while (true)
+	
+	//run_main_menu();
+	start_game();
+			
+	while (1)
 	{
-		SPI1_Init();
-		SPI1_Preset();
-		// 132x(8*8+1) declared
-		// but 128x64 real
-		posx=0;
-		posy=0;
-		display_fill(0x00);
-		draw_board();
-		copy_map(Board,Bit_map);
-		select_tile(0,0);
-		draw_changes();
-		inicialise_piktogramm_array();
-		inicialise_tile_memory();
-		selector = 0;
-
-		spawn_mines(mine_field);
-		calculate_how_many_mines_around(mine_field,how_many_mines_around);
-
-		// All "button press" events organized in hierarchial order because of their mutual exclusiveness
-
-		// Function BtnCLick is triggering Click event, according to its input data:
-		// Port, Pin, ClickMode(OnPress -"D", OnRelease - "U", While holding -"H"), 
-		// Defalut delay (for "D" and "U" mode) and Hold delay (for "H" mode).
-		// Integer, returned by function, provides information about internal errors.
-		// ErrCodes 7,8,9 are indicating successfull event generatin after corresponding button was pressed,
-		// 0 - corresponding button was not pressed.
-
-		while (1)
-		{
-			if (BtnClick('A',8,'D',10000,10000)==7){} // MID BUTTON	
-			else if (BtnClick('B',12,'D',10000,10000)==7){} // UP BUTTON
-				else if (BtnClick('B',13,'D',10000,10000)==7){} // DOWN BUTTON
-					else if (BtnClick('B',14,'D',10000,10000)==7){} // LEFT BUTTON
-						else if (BtnClick('B',15,'D',10000,10000)==7){} // RIGHT BUTTON
-							else
-							{
-								delay_us(333); // NOTHING
-							}
-		}			
+		/* code */
 	}
 }
 
@@ -101,154 +59,59 @@ void TIM2_IRQHandler(void)
 
 void ButtonClick_A_8_Down() //mid
 {
-	if (tile_memory[posx][posy]!=PIKTOGRAMM_ARRAY_LENGTH) // Preventing interactions with already opend tile
+	if (game_started)
 	{
-		if (select_mode_enabled)
-		{
-
-			if (tile_check_flag == 1)
-			{
-				if (how_many_mines_around[posx][posy]==9)
-				{
-					game_over();
-				}
-				else 
-				{
-					draw_empty_tile(posx,posy);
-					draw_default_tile_borders(posx,posy);
-					draw_number(posx,posy,how_many_mines_around[posx][posy]);
-					tile_memory[posx][posy] = PIKTOGRAMM_ARRAY_LENGTH; // Marking tile as opend (to prevent modifing manually)
-					copy_map(Board,Bit_map);
-					draw_selection(posx,posy);
-					draw_changes();
-					select_mode_enabled = !select_mode_enabled;
-					return;
-				}
-			}
-			draw_default_tile_borders(posx,posy);
-			copy_map(Board,Bit_map);
-			draw_selection(posx,posy);
-			draw_changes();	
-			
-		} else
-		{
-			draw_empty_tile(posx,posy);
-			selector=tile_memory[posx][posy];
-			piktograms[selector](posx,posy);
-			draw_selection(posx,posy);
-			draw_changes();
-		}
-		select_mode_enabled = !select_mode_enabled;
+		ingame_click_mid();
 	}
-
+	else
+	{
+		menu_click_mid();
+	}	
 }
 
 void ButtonClick_B_12_Down() //up
 {	
-	if (!select_mode_enabled)
+	if (game_started)
 	{
-		if (posy>0)
-		{
-			posy--;
-		}
-		else 
-		{
-			posy = Y_TILE_COUNT - 1;
-		}
-		select_tile(posx,posy);
-		draw_changes();
+		ingame_click_up();
 	}
+	else
+	{
+		menu_click_up();
+	}	
 }
 
 void ButtonClick_B_13_Down() //down
 {	
-	if (!select_mode_enabled)
+	if (game_started)
 	{
-		if (posy<(Y_TILE_COUNT-1))
-		{
-			posy++;
-		}
-		else 
-		{
-			posy = 0;
-		}
-		select_tile(posx,posy);
-		draw_changes();
+		ingame_click_down();
+	}
+	else
+	{
+		menu_click_down();
 	}	
 }
 void ButtonClick_B_14_Down() //left
 {	
-	if (!select_mode_enabled)
+	if (game_started)
 	{
-		if (posx>0)
-		{
-			posx--;
-		}
-		else 
-		{
-			posx = X_TILE_COUNT-1;
-		}
-		select_tile(posx,posy);
-		draw_changes();
-	}	
+		ingame_click_left();
+	}
 	else
 	{
-		if (selector>0)
-		{
-			selector--;
-		}
-		else
-		{
-			selector = (PIKTOGRAMM_ARRAY_LENGTH-1);
-		}
-		draw_empty_tile(posx,posy);
-		tile_memory[posx][posy] = selector;
-		piktograms[selector](posx,posy);
-		draw_changes();
-	}
+		menu_click_left();
+	}	
 }
 void ButtonClick_B_15_Down() //right
 {	
-	if (!select_mode_enabled)
+	if (game_started)
 	{
-		if (posx<(X_TILE_COUNT-1))
-		{
-			posx++;
-		}
-		else 
-		{
-			posx = 0;
-		}
-
-		select_tile(posx,posy);
-		draw_changes();
-	}	
+		ingame_click_right();
+	}
 	else
 	{
-		if (selector<(PIKTOGRAMM_ARRAY_LENGTH-1))
-		{
-			selector++;
-		}
-		else
-		{
-			selector = 0;
-		}
-		draw_empty_tile(posx,posy);
-		tile_memory[posx][posy] = selector;
-		piktograms[selector](posx,posy);
-		draw_changes();
+		menu_click_right();
 	}
 }
 
-void toggle_led()
-{
-	// ON/OFF LED light on MID button click
-	ToggleLED = !ToggleLED;
-	if (!ToggleLED) 
-	{
-		GPIOC-> BSRR =~GPIOC->ODR & (1<<13);
-	} else
-	{
-		GPIOC-> BSRR = GPIOC->ODR & (1<<13)<<16;
-	}
-}

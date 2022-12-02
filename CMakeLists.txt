@@ -63,6 +63,8 @@ set(SOURCE_FILES
     StaticLib/configuration.c
     StaticLib/game.h
     StaticLib/game.c
+    StaticLib/Graphics/menu_title.c
+    StaticLib/Graphics/menu_play.c
     main.c)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/.gdbinit DESTINATION ${EXECUTABLE_OUTPUT_PATH})

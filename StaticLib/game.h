@@ -22,6 +22,11 @@
     extern uint8_t Board[128][8];
     extern uint8_t Game_UI[128][8];
     extern uint8_t Bit_map[128][8];
+    extern uint8_t menu_play_map[128*8];
+    extern int posx;
+    extern int posy;
+    extern uint8_t selector;
+    extern bool select_mode_enabled; 
 
     void inicialise_piktogramm_array(void);
     void inicialise_tile_memory(void);
@@ -33,7 +38,6 @@
     void draw_flag(uint8_t x_number, uint8_t y_number);
     void draw_empty_tile(uint8_t x_number, uint8_t y_number);
     void draw_question_mark(uint8_t x_number, uint8_t y_number);
-    void draw_arrows(uint8_t x_number, uint8_t y_number);
     void select_mode(uint8_t x_number, uint8_t y_number);
     void draw_ok(uint8_t x_number, uint8_t y_number);
     void draw_back(uint8_t x_number, uint8_t y_number);
@@ -42,5 +46,18 @@
     (uint8_t  mine_field[X_TILE_COUNT][Y_TILE_COUNT],uint8_t  how_many_mines_around[X_TILE_COUNT][Y_TILE_COUNT]);
     void game_over(void);
     void draw_number(uint8_t x_number, uint8_t y_number, uint8_t mine_count);
+    void run_main_menu(void);
+    void menu_click_mid(void);
+    void menu_click_up(void);
+    void menu_click_down(void);
+    void menu_click_left(void);
+    void menu_click_right(void);
+    void start_game(void);
+    void ingame_click_mid(void);
+    void ingame_click_up(void);
+    void ingame_click_down(void);
+    void ingame_click_left(void);
+    void ingame_click_right(void);
+
 
 #endif
