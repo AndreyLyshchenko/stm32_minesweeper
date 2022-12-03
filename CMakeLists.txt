@@ -51,20 +51,24 @@ set(SOURCE_FILES
     stm32/startup/startup_stm32f10x_md.c # Choose startup file for your MCU
     stm32/system_stm32f10x.c
     syscalls/syscalls.c
+    StaticLib/constant_set.h
     StaticLib/delay.c
     StaticLib/delay.h
     StaticLib/buttons.h
     StaticLib/buttons.c
     StaticLib/spi.h
     StaticLib/spi.c
-    StaticLib/display.h
-    StaticLib/display.c
     StaticLib/configuration.h
     StaticLib/configuration.c
-    StaticLib/game.h
-    StaticLib/game.c
+    StaticLib/logic.h
+    StaticLib/game_logic.c
+    StaticLib/menu_logic.c
     StaticLib/Graphics/menu_title.c
     StaticLib/Graphics/menu_play.c
+    StaticLib/Graphics/graphical_primitives.h
+    StaticLib/Graphics/graphical_primitives.c
+    StaticLib/Graphics/graphical_derivatives.h
+    StaticLib/Graphics/graphical_derivatives.c
     main.c)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/.gdbinit DESTINATION ${EXECUTABLE_OUTPUT_PATH})

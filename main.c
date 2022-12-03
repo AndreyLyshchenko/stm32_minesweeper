@@ -1,38 +1,23 @@
 #include <stdint.h>
 #include <stm32f10x.h>
+#include <stdbool.h>
 #include "StaticLib/delay.h"
 #include "StaticLib/buttons.h"
-#include <stdbool.h>
 #include "StaticLib/spi.h"
-#include "StaticLib/display.h"
 #include "StaticLib/configuration.h"
-#include "StaticLib/game.h"
+#include "StaticLib/logic.h"
 
 
-
-
-extern uint8_t Bit_map[128][8];
-extern uint8_t Board[128][8];
-extern uint8_t tile_check_flag;
 int posx;
 int posy;
-uint8_t selector;
 bool select_mode_enabled; 
 extern bool game_started;
-extern void (*piktograms[5])(uint8_t,uint8_t);
-extern uint8_t mine_field[X_TILE_COUNT][Y_TILE_COUNT];
-extern uint8_t how_many_mines_around[X_TILE_COUNT][Y_TILE_COUNT];
-extern uint8_t tile_memory[X_TILE_COUNT][Y_TILE_COUNT];
-extern uint8_t menu_title_map[128*8];
-
 
 int __attribute((noreturn)) main(void)
 {
 	preconfigure_microcontroller();
 	preconfigure_SPI();
 	select_mode_enabled = false;
-
-
 	
 	//run_main_menu();
 	start_game();
