@@ -269,6 +269,17 @@ void rectangle(int x1,int y1, int x2, int y2, uint8_t border_state, uint8_t fill
     }
 }
 
+ void reset_map(uint8_t array[DISPLAY_WIDTH][DISPLAY_PAGE_COUNT])
+ {
+    for (int i = 0; i < DISPLAY_WIDTH; i++)
+    {
+        for (int j = 0; j < DISPLAY_PAGE_COUNT; j++)
+        {
+            array[i][j] = 0x00;
+        }
+    } 
+ }
+
 /// @brief Copying bitmap from array_b to array_a WITHOUT redrawing of screen
 void copy_map(uint8_t  array_a[128][8], uint8_t  array_b[128][8])
 {

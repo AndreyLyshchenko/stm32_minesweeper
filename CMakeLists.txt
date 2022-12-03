@@ -64,7 +64,8 @@ set(SOURCE_FILES
     StaticLib/game_logic.c
     StaticLib/menu_logic.c
     StaticLib/Graphics/menu_title.c
-    StaticLib/Graphics/menu_play.c
+    StaticLib/Graphics/menu_bit_map.c
+    StaticLib/Graphics/loading_bit_map.c
     StaticLib/Graphics/graphical_primitives.h
     StaticLib/Graphics/graphical_primitives.c
     StaticLib/Graphics/graphical_derivatives.h

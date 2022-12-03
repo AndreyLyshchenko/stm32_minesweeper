@@ -19,8 +19,7 @@ int __attribute((noreturn)) main(void)
 	preconfigure_SPI();
 	select_mode_enabled = false;
 	
-	//run_main_menu();
-	start_game();
+	run_main_menu();
 			
 	while (1)
 	{

@@ -49,8 +49,6 @@ void draw_selection(uint8_t x_number, uint8_t y_number)
         );
 }
 
-
-
 void draw_default_tile_borders(uint8_t x_number, uint8_t y_number)
 {
     rectangle(

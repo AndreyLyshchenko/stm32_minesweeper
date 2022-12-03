@@ -5,7 +5,7 @@ uint8_t how_many_mines_around[X_TILE_COUNT][Y_TILE_COUNT]; // X(0..8) mines plac
 uint8_t tile_memory[X_TILE_COUNT][Y_TILE_COUNT]; // Contains info about previously held pictogram 
 uint8_t tile_check_flag; // This flag is used to tell the programm that we are going to open a tile
 bool game_started;
-uint8_t selector;
+uint8_t ingame_selector;
 
 void (*piktograms[PIKTOGRAMM_ARRAY_LENGTH])(uint8_t,uint8_t);
 
@@ -165,40 +165,19 @@ void start_game(void)
     game_started = true;
     posx=0;
 	posy=0;
-	display_fill(0x00);		
+	inicialise_piktogramm_array();
+	inicialise_tile_memory();
+	spawn_mines(mine_field);
+	calculate_how_many_mines_around(mine_field,how_many_mines_around);
+	ingame_selector = 0;
 
+	reset_map(Bit_map);
 	draw_board();
 	copy_map(Board,Bit_map);
 	select_tile(0,0);
 	draw_changes();
-	inicialise_piktogramm_array();
-	inicialise_tile_memory();
-	selector = 0;
 
-	spawn_mines(mine_field);
-	calculate_how_many_mines_around(mine_field,how_many_mines_around);
-
-	// All "button press" events organized in hierarchial order because of their mutual exclusiveness
-
-	// Function BtnCLick is triggering Click event, according to its input data:
-	// Port, Pin, ClickMode(OnPress -"D", OnRelease - "U", While holding -"H"), 
-	// Defalut delay (for "D" and "U" mode) and Hold delay (for "H" mode).
-	// Integer, returned by function, provides information about internal errors.
-	// ErrCodes 7,8,9 are indicating successfull event generatin after corresponding button was pressed,
-	// 0 - corresponding button was not pressed.
-
-	while (1)
-	{
-		if (BtnClick('A',8,'D',10000,10000)==7){} // MID BUTTON	
-		else if (BtnClick('B',12,'D',10000,10000)==7){} // UP BUTTON
-			else if (BtnClick('B',13,'D',10000,10000)==7){} // DOWN BUTTON
-				else if (BtnClick('B',14,'D',10000,10000)==7){} // LEFT BUTTON
-					else if (BtnClick('B',15,'D',10000,10000)==7){} // RIGHT BUTTON
-						else
-						{
-							delay_us(333); // NOTHING
-						}
-	}
+	transfer_control_to_buttons();
 }
 
 void ingame_click_mid(void)
@@ -235,8 +214,8 @@ void ingame_click_mid(void)
 		} else
 		{
 			draw_empty_tile(posx,posy);
-			selector=tile_memory[posx][posy];
-			piktograms[selector](posx,posy);
+			ingame_selector=tile_memory[posx][posy];
+			piktograms[ingame_selector](posx,posy);
 			draw_selection(posx,posy);
 			draw_changes();
 		}
@@ -292,17 +271,17 @@ void ingame_click_left(void)
 	}	
 	else
 	{
-		if (selector>0)
+		if (ingame_selector>0)
 		{
-			selector--;
+			ingame_selector--;
 		}
 		else
 		{
-			selector = (PIKTOGRAMM_ARRAY_LENGTH-1);
+			ingame_selector = (PIKTOGRAMM_ARRAY_LENGTH-1);
 		}
 		draw_empty_tile(posx,posy);
-		tile_memory[posx][posy] = selector;
-		piktograms[selector](posx,posy);
+		tile_memory[posx][posy] = ingame_selector;
+		piktograms[ingame_selector](posx,posy);
 		draw_changes();
 	}
 }
@@ -324,17 +303,17 @@ void ingame_click_right(void)
 	}	
 	else
 	{
-		if (selector<(PIKTOGRAMM_ARRAY_LENGTH-1))
+		if (ingame_selector<(PIKTOGRAMM_ARRAY_LENGTH-1))
 		{
-			selector++;
+			ingame_selector++;
 		}
 		else
 		{
-			selector = 0;
+			ingame_selector = 0;
 		}
 		draw_empty_tile(posx,posy);
-		tile_memory[posx][posy] = selector;
-		piktograms[selector](posx,posy);
+		tile_memory[posx][posy] = ingame_selector;
+		piktograms[ingame_selector](posx,posy);
 		draw_changes();
 	}
 }

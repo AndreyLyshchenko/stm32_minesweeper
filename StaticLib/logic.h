@@ -10,7 +10,8 @@
     extern uint8_t Board[128][8];
     extern uint8_t Game_UI[128][8];
     extern uint8_t Bit_map[128][8];
-    extern uint8_t menu_play_map[128*8];
+    extern uint8_t menu_bit_map[128*8];
+    extern uint8_t loading_bit_map[128*8]; 
     extern int posx;
     extern int posy;
     extern bool select_mode_enabled; 
