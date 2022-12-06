@@ -28,6 +28,7 @@
     void calculate_how_many_mines_around(void);
     
     void game_over(void);
+    void win_check(void);
 
     void run_main_menu(void);
     void menu_click_mid(void);

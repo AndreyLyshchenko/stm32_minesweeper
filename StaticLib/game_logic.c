@@ -5,6 +5,8 @@ uint8_t recursion_marker[X_TILE_COUNT][Y_TILE_COUNT]; // if 1 - tile has been al
 uint8_t how_many_mines_around[X_TILE_COUNT][Y_TILE_COUNT]; // X(0..8) mines placed around tile
 uint8_t tile_memory[X_TILE_COUNT][Y_TILE_COUNT]; // Contains info about previously held pictogram 
 uint8_t tile_check_flag; // This flag is used to tell the programm that we are going to open a tile
+uint8_t open_tiles_counter;
+uint8_t board_mine_count;
 bool game_started;
 bool game_over_flag;
 bool win_flag;
@@ -73,7 +75,7 @@ void spawn_mines()
 	default:
 		break;
 	}
-
+	board_mine_count = mine_count;
 	for (uint8_t i = 0; i < X_TILE_COUNT; i++)
 	{
 		for (uint8_t j = 0; j < Y_TILE_COUNT; j++)
@@ -219,6 +221,7 @@ void game_over(void)
 
 void start_game(void)
 {
+	open_tiles_counter = 0;
     game_started = true;
 	game_over_flag = false;
 	ending_dialog = false;
@@ -298,6 +301,7 @@ void ingame_click_mid(void)
 
 void open_tile(uint8_t x_number, uint8_t y_number)
 {
+	open_tiles_counter+=1;
 	recursion_marker[x_number][y_number] = 1;
 	draw_empty_tile(x_number,y_number);
 	draw_number(x_number,y_number,how_many_mines_around[x_number][y_number]);
@@ -308,15 +312,16 @@ void open_tile(uint8_t x_number, uint8_t y_number)
 	if (how_many_mines_around[x_number][y_number]==0)
 	{
 		uint8_t map = searching_for_tiles_around_selected_one(x_number,y_number);
-		if ((map & 0b10000000) && (recursion_marker[x_number-1][y_number-1]==0)) {open_tile(x_number-1,y_number-1);} 		
-		if ((map & 0b01000000) && (recursion_marker[x_number][y_number-1]==0)) {open_tile(x_number,y_number-1);}
-		if ((map & 0b00100000) && (recursion_marker[x_number+1][y_number-1]==0)) {open_tile(x_number+1,y_number-1);} 
-		if ((map & 0b00010000) && (recursion_marker[x_number+1][y_number]==0)) {open_tile(x_number+1,y_number);}
-		if ((map & 0b00001000) && (recursion_marker[x_number+1][y_number+1]==0)) {open_tile(x_number+1,y_number+1);}
-		if ((map & 0b00000100) && (recursion_marker[x_number][y_number+1]==0)) {open_tile(x_number,y_number+1);}
-		if ((map & 0b00000010) && (recursion_marker[x_number-1][y_number+1]==0)) {open_tile(x_number-1,y_number+1);}
-		if ((map & 0b00000001) && (recursion_marker[x_number-1][y_number]==0)) {open_tile(x_number-1,y_number);}   
+		if ((map & 0b10000000) && (recursion_marker[x_number-1][y_number-1]==0) && (tile_memory[x_number-1][y_number-1]!=PIKTOGRAMM_ARRAY_LENGTH)) {open_tile(x_number-1,y_number-1);} 		
+		if ((map & 0b01000000) && (recursion_marker[x_number][y_number-1]==0) && (tile_memory[x_number][y_number-1]!=PIKTOGRAMM_ARRAY_LENGTH)) {open_tile(x_number,y_number-1);}
+		if ((map & 0b00100000) && (recursion_marker[x_number+1][y_number-1]==0) && (tile_memory[x_number+1][y_number-1]!=PIKTOGRAMM_ARRAY_LENGTH)) {open_tile(x_number+1,y_number-1);} 
+		if ((map & 0b00010000) && (recursion_marker[x_number+1][y_number]==0) && (tile_memory[x_number+1][y_number]!=PIKTOGRAMM_ARRAY_LENGTH)) {open_tile(x_number+1,y_number);}
+		if ((map & 0b00001000) && (recursion_marker[x_number+1][y_number+1]==0) && (tile_memory[x_number+1][y_number+1]!=PIKTOGRAMM_ARRAY_LENGTH)) {open_tile(x_number+1,y_number+1);}
+		if ((map & 0b00000100) && (recursion_marker[x_number][y_number+1]==0) && (tile_memory[x_number][y_number+1]!=PIKTOGRAMM_ARRAY_LENGTH)) {open_tile(x_number,y_number+1);}
+		if ((map & 0b00000010) && (recursion_marker[x_number-1][y_number+1]==0) && (tile_memory[x_number-1][y_number+1]!=PIKTOGRAMM_ARRAY_LENGTH)) {open_tile(x_number-1,y_number+1);}
+		if ((map & 0b00000001) && (recursion_marker[x_number-1][y_number]==0) && (tile_memory[x_number-1][y_number]!=PIKTOGRAMM_ARRAY_LENGTH)) {open_tile(x_number-1,y_number);}   
 	}
+	win_check();
 }
 
 void ingame_click_up(void)
@@ -412,5 +417,14 @@ void ingame_click_right(void)
 		tile_memory[posx][posy] = ingame_selector;
 		piktograms[ingame_selector](posx,posy);
 		draw_changes();
+	}
+}
+
+void win_check()
+{
+	if (open_tiles_counter == ((X_TILE_COUNT*Y_TILE_COUNT)-board_mine_count))
+	{
+		win_flag = true;
+		game_over();
 	}
 }
