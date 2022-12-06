@@ -18,12 +18,15 @@
 
     void inicialise_piktogramm_array(void);
     void inicialise_tile_memory(void);
+    void reset_recursion_markers(void);
     uint8_t searching_for_tiles_around_selected_one(uint8_t x_number, uint8_t y_number);
     void spawn_mines();
+    void open_tile(uint8_t x_number, uint8_t y_number);
     void filling_surrounding_tiles(uint8_t map, uint8_t x_number, uint8_t y_number, uint8_t filler);
     void calculate_how_many_mines_around(void);
     
     void game_over(void);
+    void create_ending_dialog_window(void);
 
     void run_main_menu(void);
     void menu_click_mid(void);
@@ -38,5 +41,6 @@
     void ingame_click_down(void);
     void ingame_click_left(void);
     void ingame_click_right(void);
+
 
 #endif

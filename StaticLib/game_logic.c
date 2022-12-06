@@ -1,6 +1,7 @@
 #include "logic.h"
 
 uint8_t mine_field[X_TILE_COUNT][Y_TILE_COUNT]; // if 0 - tile containing no mines, 1 - tile containing a mine
+uint8_t recursion_marker[X_TILE_COUNT][Y_TILE_COUNT]; // if 1 - tile has been already checked in a recursion cycle
 uint8_t how_many_mines_around[X_TILE_COUNT][Y_TILE_COUNT]; // X(0..8) mines placed around tile
 uint8_t tile_memory[X_TILE_COUNT][Y_TILE_COUNT]; // Contains info about previously held pictogram 
 uint8_t tile_check_flag; // This flag is used to tell the programm that we are going to open a tile
@@ -33,6 +34,17 @@ void inicialise_piktogramm_array(void)
     piktograms[1]=draw_question_mark;
     piktograms[2]=draw_ok;
     piktograms[3]=draw_empty_tile;
+}
+
+void reset_recursion_markers(void)
+{
+	for (uint8_t x = 0; x < X_TILE_COUNT; x++)
+	{
+		for (uint8_t y = 0; y < Y_TILE_COUNT; y++)
+		{
+			recursion_marker[x][y] = 0;	
+		}	
+	}
 }
 
 void select_tile(uint8_t x_number, uint8_t y_number)
@@ -246,13 +258,9 @@ void ingame_click_mid(void)
 					}
 					else 
 					{
-						draw_empty_tile(posx,posy);
-						draw_default_tile_borders(posx,posy);
-						draw_number(posx,posy,how_many_mines_around[posx][posy]);
-						tile_memory[posx][posy] = PIKTOGRAMM_ARRAY_LENGTH; // Marking tile as opend (to prevent modifing manually)
-						copy_map(Board,Bit_map);
-						draw_selection(posx,posy);
-						draw_changes();
+						reset_recursion_markers();
+						open_tile(posx,posy);
+						select_mode(posx,posy);
 						select_mode_enabled = !select_mode_enabled;
 						return;
 					}
@@ -278,6 +286,30 @@ void ingame_click_mid(void)
 		terminator = true;
 	}	
 }
+
+void open_tile(uint8_t x_number, uint8_t y_number)
+{
+	recursion_marker[x_number][y_number] = 1;
+	draw_empty_tile(x_number,y_number);
+	draw_default_tile_borders(x_number,y_number);
+	draw_number(x_number,y_number,how_many_mines_around[x_number][y_number]);
+	tile_memory[x_number][y_number] = PIKTOGRAMM_ARRAY_LENGTH; // Marking tile as opend (to prevent modifing manually)
+	copy_map(Board,Bit_map);
+	draw_changes();
+	if (how_many_mines_around[x_number][y_number]==0)
+	{
+		uint8_t map = searching_for_tiles_around_selected_one(x_number,y_number);
+		if ((map & 0b10000000) && (recursion_marker[x_number-1][y_number-1]==0)) {open_tile(x_number-1,y_number-1);} 		
+		if ((map & 0b01000000) && (recursion_marker[x_number][y_number-1]==0)) {open_tile(x_number,y_number-1);}
+		if ((map & 0b00100000) && (recursion_marker[x_number+1][y_number-1]==0)) {open_tile(x_number+1,y_number-1);} 
+		if ((map & 0b00010000) && (recursion_marker[x_number+1][y_number]==0)) {open_tile(x_number+1,y_number);}
+		if ((map & 0b00001000) && (recursion_marker[x_number+1][y_number+1]==0)) {open_tile(x_number+1,y_number+1);}
+		if ((map & 0b00000100) && (recursion_marker[x_number][y_number+1]==0)) {open_tile(x_number,y_number+1);}
+		if ((map & 0b00000010) && (recursion_marker[x_number-1][y_number+1]==0)) {open_tile(x_number-1,y_number+1);}
+		if ((map & 0b00000001) && (recursion_marker[x_number-1][y_number]==0)) {open_tile(x_number-1,y_number);}   
+	}
+}
+
 void ingame_click_up(void)
 {
     if (!select_mode_enabled)
@@ -373,3 +405,8 @@ void ingame_click_right(void)
 		draw_changes();
 	}
 }
+
+// void create_ending_dialog_window(void)
+// {
+
+// }
