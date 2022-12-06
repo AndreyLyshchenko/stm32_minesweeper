@@ -7,9 +7,12 @@ uint8_t tile_memory[X_TILE_COUNT][Y_TILE_COUNT]; // Contains info about previous
 uint8_t tile_check_flag; // This flag is used to tell the programm that we are going to open a tile
 bool game_started;
 bool game_over_flag;
+bool win_flag;
+bool ending_dialog;
 bool first_check;
 uint8_t ingame_selector;
 extern bool terminator;
+extern bool restart_flag;
 extern uint8_t selected_difficulty;
 
 void (*piktograms[PIKTOGRAMM_ARRAY_LENGTH])(uint8_t,uint8_t);
@@ -218,7 +221,11 @@ void start_game(void)
 {
     game_started = true;
 	game_over_flag = false;
+	ending_dialog = false;
+	win_flag = false;
 	first_check = true;
+	terminator = false;
+	restart_flag = false;
     posx=0;
 	posy=0;
 	inicialise_piktogramm_array();
@@ -283,7 +290,9 @@ void ingame_click_mid(void)
 	}
 	else
 	{
-		terminator = true;
+		ending_dialog = true;
+		create_end_dialog_window();
+		//terminator = true;
 	}	
 }
 
@@ -291,9 +300,9 @@ void open_tile(uint8_t x_number, uint8_t y_number)
 {
 	recursion_marker[x_number][y_number] = 1;
 	draw_empty_tile(x_number,y_number);
-	draw_default_tile_borders(x_number,y_number);
 	draw_number(x_number,y_number,how_many_mines_around[x_number][y_number]);
 	tile_memory[x_number][y_number] = PIKTOGRAMM_ARRAY_LENGTH; // Marking tile as opend (to prevent modifing manually)
+	draw_default_tile_borders(x_number,y_number);
 	copy_map(Board,Bit_map);
 	draw_changes();
 	if (how_many_mines_around[x_number][y_number]==0)
@@ -405,8 +414,3 @@ void ingame_click_right(void)
 		draw_changes();
 	}
 }
-
-// void create_ending_dialog_window(void)
-// {
-
-// }

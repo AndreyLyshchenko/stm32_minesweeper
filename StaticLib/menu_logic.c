@@ -2,6 +2,7 @@
 
 extern bool game_started;
 extern bool terminator;
+extern bool restart_flag;
 
 uint8_t menu_selector;
 uint8_t selected_difficulty;
@@ -210,6 +211,7 @@ void run_main_menu(void)
     }
     terminator = false;
     game_started = false;
+    restart_flag = false;
     menu_selector = 0;
     select_mode_enabled = false;
 
@@ -222,6 +224,13 @@ void run_main_menu(void)
     menu_item_select(menu_selector,CL_WHITE);
 
     transfer_control_to_buttons();
+
+    while (restart_flag)
+    {
+        start_game();
+    }
+
+
 }
 
 void menu_click_mid(void)

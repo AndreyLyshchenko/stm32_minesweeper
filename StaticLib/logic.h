@@ -11,7 +11,9 @@
     extern uint8_t Game_UI[128][8];
     extern uint8_t Bit_map[128][8];
     extern uint8_t menu_bit_map[128*8];
-    extern uint8_t loading_bit_map[128*8]; 
+    extern uint8_t loading_bit_map[128*8];
+    extern uint8_t game_end_win[128*8];
+    extern uint8_t game_end_loose[128*8];   
     extern int posx;
     extern int posy;
     extern bool select_mode_enabled; 
@@ -26,7 +28,6 @@
     void calculate_how_many_mines_around(void);
     
     void game_over(void);
-    void create_ending_dialog_window(void);
 
     void run_main_menu(void);
     void menu_click_mid(void);
@@ -42,5 +43,12 @@
     void ingame_click_left(void);
     void ingame_click_right(void);
 
+    void create_end_dialog_window(void);
+    void end_dialog_click_mid(void);
+    void end_dialog_click_up(void);
+    void end_dialog_click_down(void);
+    void end_dialog_click_left(void);
+    void end_dialog_click_right(void);
 
+    void end_dialog_item_select(void);
 #endif

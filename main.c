@@ -13,6 +13,7 @@ int posy;
 bool select_mode_enabled;
 bool terminator; 
 extern bool game_started;
+extern bool ending_dialog;
 
 int __attribute((noreturn)) main(void)
 {
@@ -45,19 +46,33 @@ void ButtonClick_A_8_Down() //mid
 {
 	if (game_started)
 	{
-		ingame_click_mid();
+		if (ending_dialog)
+		{
+			end_dialog_click_mid();
+		}
+		else
+		{
+			ingame_click_mid();
+		}
 	}
 	else
 	{
 		menu_click_mid();
-	}	
+	}
 }
 
 void ButtonClick_B_12_Down() //up
 {	
 	if (game_started)
 	{
-		ingame_click_up();
+		if (ending_dialog)
+		{
+			end_dialog_click_up();
+		}
+		else
+		{
+			ingame_click_up();
+		}
 	}
 	else
 	{
@@ -69,29 +84,50 @@ void ButtonClick_B_13_Down() //down
 {	
 	if (game_started)
 	{
-		ingame_click_down();
+		if (ending_dialog)
+		{
+			end_dialog_click_down();
+		}
+		else
+		{
+			ingame_click_down();
+		}
 	}
 	else
 	{
 		menu_click_down();
-	}	
+	}
 }
 void ButtonClick_B_14_Down() //left
 {	
 	if (game_started)
 	{
-		ingame_click_left();
+		if (ending_dialog)
+		{
+			end_dialog_click_left();
+		}
+		else
+		{
+			ingame_click_left();
+		}
 	}
 	else
 	{
 		menu_click_left();
-	}	
+	}
 }
 void ButtonClick_B_15_Down() //right
 {	
 	if (game_started)
 	{
-		ingame_click_right();
+		if (ending_dialog)
+		{
+			end_dialog_click_right();
+		}
+		else
+		{
+			ingame_click_right();
+		}
 	}
 	else
 	{
