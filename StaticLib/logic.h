@@ -18,13 +18,10 @@
 
     void inicialise_piktogramm_array(void);
     void inicialise_tile_memory(void);
-
-    void spawn_mines(uint8_t  mine_field[X_TILE_COUNT][Y_TILE_COUNT]);
-    void calculate_how_many_mines_around
-        (
-         uint8_t  mine_field[X_TILE_COUNT][Y_TILE_COUNT],
-         uint8_t  how_many_mines_around[X_TILE_COUNT][Y_TILE_COUNT]
-        );
+    uint8_t searching_for_tiles_around_selected_one(uint8_t x_number, uint8_t y_number);
+    void spawn_mines();
+    void filling_surrounding_tiles(uint8_t map, uint8_t x_number, uint8_t y_number, uint8_t filler);
+    void calculate_how_many_mines_around(void);
     
     void game_over(void);
 

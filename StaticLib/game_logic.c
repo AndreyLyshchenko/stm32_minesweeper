@@ -6,6 +6,7 @@ uint8_t tile_memory[X_TILE_COUNT][Y_TILE_COUNT]; // Contains info about previous
 uint8_t tile_check_flag; // This flag is used to tell the programm that we are going to open a tile
 bool game_started;
 bool game_over_flag;
+bool first_check;
 uint8_t ingame_selector;
 extern bool terminator;
 extern uint8_t selected_difficulty;
@@ -40,7 +41,7 @@ void select_tile(uint8_t x_number, uint8_t y_number)
     draw_selection(x_number,y_number);
 }
 
-void spawn_mines(uint8_t  mine_field[X_TILE_COUNT][Y_TILE_COUNT])
+void spawn_mines()
 {
 	uint8_t mine_count;
 	switch (selected_difficulty)
@@ -64,7 +65,10 @@ void spawn_mines(uint8_t  mine_field[X_TILE_COUNT][Y_TILE_COUNT])
 		{
 			mine_field[i][j]=0;
 		}
-	}		
+	}	
+
+	uint8_t map = searching_for_tiles_around_selected_one(posx,posy);
+	filling_surrounding_tiles(map,posx,posy,3); 		 	
 
 	srand(TIM2 -> CNT);
 	while (mine_count>0)
@@ -78,83 +82,77 @@ void spawn_mines(uint8_t  mine_field[X_TILE_COUNT][Y_TILE_COUNT])
 			mine_count--;
 		}
 	}
-	
+
+	filling_surrounding_tiles(map,posx,posy,0);
 }
 
-void calculate_how_many_mines_around
-(uint8_t  mine_field[X_TILE_COUNT][Y_TILE_COUNT],uint8_t  how_many_mines_around[X_TILE_COUNT][Y_TILE_COUNT])
+uint8_t searching_for_tiles_around_selected_one(uint8_t x_number, uint8_t y_number)
+{
+	// 0b 1   1    1	
+	//    _   _   _ 	
+	//	| _	| _	| _ |
+	// 1| _	| X	| _ |1
+	//	| _ | _ | _ |1	
+	//    1   1 		
+
+	uint8_t result = 0b11111111;
+
+	if (x_number== 0) // Can't go left
+	{
+		result &= 0b01111100;
+	}
+
+	if (x_number== (X_TILE_COUNT-1)) // Can't go right 
+	{
+		result &= 0b11000111;
+	}
+
+	if (y_number==0) // Can't go up
+	{
+		result &= 0b00011111;
+	}
+	
+	 if (y_number==(Y_TILE_COUNT-1)) // Can't go down
+	{
+		result &= 0b11110001;
+	}
+
+	return result;
+}
+
+void filling_surrounding_tiles(uint8_t map, uint8_t x_number, uint8_t y_number, uint8_t filler)
+{
+	mine_field[x_number][y_number] = filler;
+
+	if (map & 0b10000000) {mine_field[x_number-1][y_number-1]=filler;} 		
+	if (map & 0b01000000) {mine_field[x_number][y_number-1]=filler;}
+	if (map & 0b00100000) {mine_field[x_number+1][y_number-1]=filler;} 
+	if (map & 0b00010000) {mine_field[x_number+1][y_number]=filler;}
+	if (map & 0b00001000) {mine_field[x_number+1][y_number+1]=filler;}
+	if (map & 0b00000100) {mine_field[x_number][y_number+1]=filler;}
+	if (map & 0b00000010) {mine_field[x_number-1][y_number+1]=filler;}
+	if (map & 0b00000001) {mine_field[x_number-1][y_number]=filler;} 
+}
+
+void calculate_how_many_mines_around()
 {
     uint8_t current_mine_count;
     for (uint8_t i = 0; i < (X_TILE_COUNT); i++)
     {
         for (uint8_t j = 0; j < (Y_TILE_COUNT); j++)
         {
-            current_mine_count = 0;
             if (mine_field[i][j]==0) // Tile does not need to know how many mines around it if there is a mine inside it
             {
-                bool do_not_check_top = false;      // Bool flags are not necessary, but they are used to
-                bool do_not_check_left = false;     // simplify code understanding
-                bool do_not_check_bottom = false;   //
-                bool do_not_check_right = false;    //
-                
-                if (i == 0)
-                {
-                    do_not_check_left = true;
-                }
-
-                if (i == (X_TILE_COUNT-1))
-                {
-                    do_not_check_right = true;
-                }
-
-                if (j==0)
-                {
-                    do_not_check_top = true;
-                }
-
-                if (j==(Y_TILE_COUNT-1))
-                {
-                    do_not_check_bottom = true;
-                }
-                
-                if (do_not_check_left!=true)
-                {
-                    if (do_not_check_top != true ) 
-                    {
-                        current_mine_count += mine_field[i-1][j-1];
-                    }
-
-                    current_mine_count += mine_field[i-1][j];
-
-                    if (do_not_check_bottom != true) 
-                    {
-                        current_mine_count += mine_field[i-1][j+1];
-                    }
-                }
-                
-                if (do_not_check_top!=true)
-                {
-                    current_mine_count += mine_field[i][j-1];
-                }    
-                if (do_not_check_bottom != true) 
-                {
-                    current_mine_count += mine_field[i][j+1];
-                }
-
-                if (do_not_check_right!=true)
-                {
-                    if (do_not_check_top != true ) 
-                    {
-                        current_mine_count += mine_field[i+1][j-1];
-                    }
-
-                    current_mine_count += mine_field[i+1][j];
-
-                    if (do_not_check_bottom != true ) 
-                    {
-                        current_mine_count += mine_field[i+1][j+1];
-                    }
-                }            
+				current_mine_count = 0;
+                uint8_t map = searching_for_tiles_around_selected_one(i,j);
+				if (map & 0b10000000) {current_mine_count+=mine_field[i-1][j-1];} 		
+				if (map & 0b01000000) {current_mine_count+=mine_field[i][j-1];}
+				if (map & 0b00100000) {current_mine_count+=mine_field[i+1][j-1];} 
+				if (map & 0b00010000) {current_mine_count+=mine_field[i+1][j];}
+				if (map & 0b00001000) {current_mine_count+=mine_field[i+1][j+1];}
+				if (map & 0b00000100) {current_mine_count+=mine_field[i][j+1];}
+				if (map & 0b00000010) {current_mine_count+=mine_field[i-1][j+1];}
+				if (map & 0b00000001) {current_mine_count+=mine_field[i-1][j];}          
             }
             else
             {
@@ -208,12 +206,11 @@ void start_game(void)
 {
     game_started = true;
 	game_over_flag = false;
+	first_check = true;
     posx=0;
 	posy=0;
 	inicialise_piktogramm_array();
 	inicialise_tile_memory();
-	spawn_mines(mine_field);
-	calculate_how_many_mines_around(mine_field,how_many_mines_around);
 	ingame_selector = 0;
 
 	reset_map(Bit_map);
@@ -236,6 +233,13 @@ void ingame_click_mid(void)
 
 				if (tile_check_flag == 1)
 				{
+					if (first_check)
+					{
+						spawn_mines();
+						calculate_how_many_mines_around();
+						first_check = false;
+					}	
+
 					if (how_many_mines_around[posx][posy]==9)
 					{
 						game_over();
