@@ -5,6 +5,17 @@ extern uint8_t Bit_map[128][8];
 extern uint8_t Board[128][8];
 extern void (*piktograms[PIKTOGRAMM_ARRAY_LENGTH])(uint8_t,uint8_t);
 
+int setx;
+int sety;
+
+void get_tile_coordinates(uint8_t tile_x_number, uint8_t tile_y_number)
+{
+    setx = BOARD_START_X+3;
+    sety = BOARD_START_Y+3;
+    setx += TILE_SIDE * tile_x_number;
+    sety += TILE_SIDE * tile_y_number; 
+}
+
 /// @brief Drawing game board frame and tiles inside it 
 void draw_board(void)
 {
@@ -73,10 +84,7 @@ void draw_mine(uint8_t x_number, uint8_t y_number)
 {
     tile_check_flag = 0;
 
-    int setx = BOARD_START_X+3;
-    int sety = BOARD_START_Y+3;
-    setx += TILE_SIDE * x_number;
-    sety += TILE_SIDE * y_number; 
+    get_tile_coordinates(x_number,y_number);
 
     put_pixel(setx,sety+0,CL_BLACK,VIRTUAL);
     put_pixel(setx+2,sety+0,CL_BLACK,VIRTUAL);
@@ -104,10 +112,7 @@ void draw_flag(uint8_t x_number, uint8_t y_number)
 {
     tile_check_flag = 0;
 
-    int setx = BOARD_START_X+3;
-    int sety = BOARD_START_Y+3;
-    setx += TILE_SIDE * x_number;
-    sety += TILE_SIDE * y_number; 
+    get_tile_coordinates(x_number,y_number);
 
     put_pixel(setx+1,sety+0,CL_BLACK,VIRTUAL);
     put_pixel(setx+2,sety+0,CL_BLACK,VIRTUAL);
@@ -131,6 +136,37 @@ void draw_flag(uint8_t x_number, uint8_t y_number)
     put_pixel(setx+4,sety+4,CL_BLACK,VIRTUAL); 
 
 }
+
+void draw_mistake(uint8_t x_number, uint8_t y_number)
+{
+    tile_check_flag = 0;
+
+    get_tile_coordinates(x_number,y_number);
+
+    rectangle(setx-1,sety-1,setx+5,sety+5,CL_BLACK,CL_BLACK,VIRTUAL);
+
+    put_pixel(setx+1,sety+0,CL_WHITE,VIRTUAL);
+    put_pixel(setx+2,sety+0,CL_WHITE,VIRTUAL);
+    put_pixel(setx+3,sety+0,CL_WHITE,VIRTUAL);
+
+    put_pixel(setx+1,sety+1,CL_WHITE,VIRTUAL);
+    put_pixel(setx+2,sety+1,CL_WHITE,VIRTUAL);
+    put_pixel(setx+3,sety+1,CL_WHITE,VIRTUAL);
+    put_pixel(setx+4,sety+1,CL_WHITE,VIRTUAL);
+
+    put_pixel(setx+1,sety+2,CL_WHITE,VIRTUAL);
+    put_pixel(setx+2,sety+2,CL_WHITE,VIRTUAL);
+    put_pixel(setx+3,sety+2,CL_WHITE,VIRTUAL);    
+
+    put_pixel(setx+1,sety+3,CL_WHITE,VIRTUAL);   
+
+    put_pixel(setx+0,sety+4,CL_WHITE,VIRTUAL);
+    put_pixel(setx+1,sety+4,CL_WHITE,VIRTUAL);
+    put_pixel(setx+2,sety+4,CL_WHITE,VIRTUAL);
+    put_pixel(setx+3,sety+4,CL_WHITE,VIRTUAL);
+    put_pixel(setx+4,sety+4,CL_WHITE,VIRTUAL); 
+}
+
 void draw_empty_tile(uint8_t x_number, uint8_t y_number)
 {
     tile_check_flag = 0;

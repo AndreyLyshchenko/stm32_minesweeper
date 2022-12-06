@@ -10,20 +10,20 @@
 
 int posx;
 int posy;
-bool select_mode_enabled; 
+bool select_mode_enabled;
+bool terminator; 
 extern bool game_started;
 
 int __attribute((noreturn)) main(void)
 {
+	terminator = false;
 	preconfigure_microcontroller();
 	preconfigure_SPI();
 	select_mode_enabled = false;
 	
-	run_main_menu();
-			
 	while (1)
 	{
-		/* code */
+		run_main_menu();
 	}
 }
 

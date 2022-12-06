@@ -42,7 +42,4 @@
     void ingame_click_left(void);
     void ingame_click_right(void);
 
-
-
-
 #endif

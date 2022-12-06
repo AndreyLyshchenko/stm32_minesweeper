@@ -1,5 +1,7 @@
 #include "buttons.h"
 
+extern bool terminator;
+
 int BtnClick(char IO_Port, int IO_Pin, char IO_Mode, uint32_t DefaultDelay, uint32_t HoldDelay) {
     int ErrCode = 0;
     GPIO_TypeDef* Port;
@@ -121,7 +123,14 @@ void transfer_control_to_buttons()
 					else if (BtnClick('B',15,'D',10000,10000)==7){} // RIGHT BUTTON
 						else
 						{
-							delay_us(333); // NOTHING
+                            if (terminator!=true)
+                            {
+                                delay_us(333); // NOTHING
+                            }
+                            else
+                            {
+                                return;
+                            }			
 						}
 	}
 }

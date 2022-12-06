@@ -5,7 +5,9 @@ uint8_t how_many_mines_around[X_TILE_COUNT][Y_TILE_COUNT]; // X(0..8) mines plac
 uint8_t tile_memory[X_TILE_COUNT][Y_TILE_COUNT]; // Contains info about previously held pictogram 
 uint8_t tile_check_flag; // This flag is used to tell the programm that we are going to open a tile
 bool game_started;
+bool game_over_flag;
 uint8_t ingame_selector;
+extern bool terminator;
 
 void (*piktograms[PIKTOGRAMM_ARRAY_LENGTH])(uint8_t,uint8_t);
 
@@ -16,7 +18,7 @@ void inicialise_tile_memory(void)
     {
         for (uint8_t y = 0; y < Y_TILE_COUNT; y++)
         {
-            tile_memory[x][y] = 0;
+            tile_memory[x][y] = 3;
         }
     }
 }
@@ -148,14 +150,32 @@ void game_over(void)
             draw_empty_tile(x,y);
             if (how_many_mines_around[x][y]==9)
             {
-                draw_mine(x,y);
+				if (tile_memory[x][y]!=0)
+				{
+					draw_mine(x,y);
+				}
+				else
+				{
+					draw_flag(x,y);
+				}
             }
             else
             {
-                draw_number(x,y,how_many_mines_around[x][y]);
+				if (tile_memory[x][y] != PIKTOGRAMM_ARRAY_LENGTH-1)
+				{
+					if (tile_memory[x][y] == 0)
+					{
+						draw_mistake(x,y);
+					}
+					else
+					{
+						draw_number(x,y,how_many_mines_around[x][y]);
+					}
+				}
             }
         }
     }
+	game_over_flag = true;
     draw_changes();
 }
 
@@ -163,6 +183,7 @@ void game_over(void)
 void start_game(void)
 {
     game_started = true;
+	game_over_flag = false;
     posx=0;
 	posy=0;
 	inicialise_piktogramm_array();
@@ -182,45 +203,52 @@ void start_game(void)
 
 void ingame_click_mid(void)
 {
-    if (tile_memory[posx][posy]!=PIKTOGRAMM_ARRAY_LENGTH) // Preventing interactions with already opend tile
+	if (game_over_flag != true)
 	{
-		if (select_mode_enabled)
+		if (tile_memory[posx][posy]!=PIKTOGRAMM_ARRAY_LENGTH) // Preventing interactions with already opend tile
 		{
-
-			if (tile_check_flag == 1)
+			if (select_mode_enabled)
 			{
-				if (how_many_mines_around[posx][posy]==9)
+
+				if (tile_check_flag == 1)
 				{
-					game_over();
+					if (how_many_mines_around[posx][posy]==9)
+					{
+						game_over();
+					}
+					else 
+					{
+						draw_empty_tile(posx,posy);
+						draw_default_tile_borders(posx,posy);
+						draw_number(posx,posy,how_many_mines_around[posx][posy]);
+						tile_memory[posx][posy] = PIKTOGRAMM_ARRAY_LENGTH; // Marking tile as opend (to prevent modifing manually)
+						copy_map(Board,Bit_map);
+						draw_selection(posx,posy);
+						draw_changes();
+						select_mode_enabled = !select_mode_enabled;
+						return;
+					}
 				}
-				else 
-				{
-					draw_empty_tile(posx,posy);
-					draw_default_tile_borders(posx,posy);
-					draw_number(posx,posy,how_many_mines_around[posx][posy]);
-					tile_memory[posx][posy] = PIKTOGRAMM_ARRAY_LENGTH; // Marking tile as opend (to prevent modifing manually)
-					copy_map(Board,Bit_map);
-					draw_selection(posx,posy);
-					draw_changes();
-					select_mode_enabled = !select_mode_enabled;
-					return;
-				}
+				draw_default_tile_borders(posx,posy);
+				copy_map(Board,Bit_map);
+				draw_selection(posx,posy);
+				draw_changes();	
+				
+			} else
+			{
+				draw_empty_tile(posx,posy);
+				ingame_selector=tile_memory[posx][posy];
+				piktograms[ingame_selector](posx,posy);
+				draw_selection(posx,posy);
+				draw_changes();
 			}
-			draw_default_tile_borders(posx,posy);
-			copy_map(Board,Bit_map);
-			draw_selection(posx,posy);
-			draw_changes();	
-			
-		} else
-		{
-			draw_empty_tile(posx,posy);
-			ingame_selector=tile_memory[posx][posy];
-			piktograms[ingame_selector](posx,posy);
-			draw_selection(posx,posy);
-			draw_changes();
+			select_mode_enabled = !select_mode_enabled;
 		}
-		select_mode_enabled = !select_mode_enabled;
 	}
+	else
+	{
+		terminator = true;
+	}	
 }
 void ingame_click_up(void)
 {

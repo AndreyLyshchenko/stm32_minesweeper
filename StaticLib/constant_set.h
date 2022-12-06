@@ -14,6 +14,7 @@
     #define X_TILE_COUNT 11
     #define Y_TILE_COUNT 5
     #define PIKTOGRAMM_ARRAY_LENGTH 4
+    #define DIFFICULTIES_ARRAY_LENGTH 3
 
     #define CL_BLACK 0
     #define CL_WHITE 1
