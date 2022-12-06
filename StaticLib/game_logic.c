@@ -8,6 +8,7 @@ bool game_started;
 bool game_over_flag;
 uint8_t ingame_selector;
 extern bool terminator;
+extern uint8_t selected_difficulty;
 
 void (*piktograms[PIKTOGRAMM_ARRAY_LENGTH])(uint8_t,uint8_t);
 
@@ -41,20 +42,43 @@ void select_tile(uint8_t x_number, uint8_t y_number)
 
 void spawn_mines(uint8_t  mine_field[X_TILE_COUNT][Y_TILE_COUNT])
 {
-    for (uint8_t i = 0; i < X_TILE_COUNT; i++)
-    {
-        for (uint8_t j = 0; j < Y_TILE_COUNT; j++)
-        {
-            if (((i+j)%2==0))
-            {
-                mine_field[i][j]=1;
-            }
-                else 
-                {
-                    mine_field[i][j]=0;
-                }
-        }
-    }
+	uint8_t mine_count;
+	switch (selected_difficulty)
+	{
+	case 0:
+		mine_count  = 8;
+		break;
+	case 1:
+		mine_count  = 12;
+		break;
+	case 2:
+		mine_count  = 16;
+		break;		
+	default:
+		break;
+	}
+
+	for (uint8_t i = 0; i < X_TILE_COUNT; i++)
+	{
+		for (uint8_t j = 0; j < Y_TILE_COUNT; j++)
+		{
+			mine_field[i][j]=0;
+		}
+	}		
+
+	srand(TIM2 -> CNT);
+	while (mine_count>0)
+	{
+		uint8_t x = (rand())%(X_TILE_COUNT);
+		uint8_t y = (rand())%(Y_TILE_COUNT);
+		
+		if (mine_field[x][y]==0)
+		{
+			mine_field[x][y]=1;
+			mine_count--;
+		}
+	}
+	
 }
 
 void calculate_how_many_mines_around

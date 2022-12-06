@@ -204,10 +204,13 @@ void menu_item_select(uint8_t menu_selector, uint8_t color)
 
 void run_main_menu(void)
 {
+    if (!terminator)
+    {
+        selected_difficulty = 1;
+    }
     terminator = false;
     game_started = false;
     menu_selector = 0;
-    selected_difficulty = 1;
     select_mode_enabled = false;
 
     put_pixel(0,0,CL_WHITE,REAL);
