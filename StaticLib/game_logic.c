@@ -12,6 +12,7 @@ bool game_over_flag;
 bool win_flag;
 bool ending_dialog;
 bool first_check;
+bool now_drawing;
 uint8_t ingame_selector;
 extern bool terminator;
 extern bool restart_flag;
@@ -206,7 +207,7 @@ void game_over(void)
 					{
 						draw_mistake(x,y);
 					}
-					else
+					else if(tile_memory[x][y] != 1) // Preventing reveal of '?' marked tiles
 					{
 						draw_number(x,y,how_many_mines_around[x][y]);
 					}
@@ -222,6 +223,7 @@ void game_over(void)
 void start_game(void)
 {
 	open_tiles_counter = 0;
+	now_drawing = false;
     game_started = true;
 	game_over_flag = false;
 	ending_dialog = false;
@@ -270,7 +272,9 @@ void ingame_click_mid(void)
 					{
 						reset_recursion_markers();
 						open_tile(posx,posy);
-						select_mode(posx,posy);
+						select_tile(posx,posy);
+						draw_changes();
+						now_drawing = false; 
 						select_mode_enabled = !select_mode_enabled;
 						return;
 					}
@@ -301,14 +305,15 @@ void ingame_click_mid(void)
 
 void open_tile(uint8_t x_number, uint8_t y_number)
 {
+	now_drawing = true;
 	open_tiles_counter+=1;
 	recursion_marker[x_number][y_number] = 1;
-	draw_empty_tile(x_number,y_number);
-	draw_number(x_number,y_number,how_many_mines_around[x_number][y_number]);
 	tile_memory[x_number][y_number] = PIKTOGRAMM_ARRAY_LENGTH; // Marking tile as opend (to prevent modifing manually)
+	draw_empty_tile(x_number,y_number);
 	draw_default_tile_borders(x_number,y_number);
+	draw_number(x_number,y_number,how_many_mines_around[x_number][y_number]);
 	copy_map(Board,Bit_map);
-	draw_changes();
+	//draw_changes();
 	if (how_many_mines_around[x_number][y_number]==0)
 	{
 		uint8_t map = searching_for_tiles_around_selected_one(x_number,y_number);

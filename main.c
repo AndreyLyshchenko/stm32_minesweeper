@@ -14,6 +14,7 @@ bool select_mode_enabled;
 bool terminator; 
 extern bool game_started;
 extern bool ending_dialog;
+extern bool now_drawing;
 
 int __attribute((noreturn)) main(void)
 {
@@ -33,13 +34,12 @@ void TIM2_IRQHandler(void)
 {
 	if (TIM2->SR & TIM_SR_UIF) // True if Update Interrupt Flag is set
 	{
-		if (select_mode_enabled) 
+		if ((select_mode_enabled)&&(!now_drawing)) 
 		{
 			select_mode(posx,posy); 
 		}
 		TIM2->SR &= ~TIM_SR_UIF; // Clearing UIF flag
 	}
-
 }
 
 void ButtonClick_A_8_Down() //mid
