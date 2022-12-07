@@ -35,7 +35,6 @@ void inicialise_tile_memory(void)
 /// @brief Initialising array of pointers on functions, wich used for drawing graphical primitives
 void inicialise_piktogramm_array(void)
 {
-    //piktograms[0]=draw_mine;
     piktograms[0]=draw_flag;
     piktograms[1]=draw_question_mark;
     piktograms[2]=draw_ok;
@@ -61,6 +60,7 @@ void select_tile(uint8_t x_number, uint8_t y_number)
 
 void spawn_mines()
 {
+	bool bad_seed_flag = false;
 	uint8_t mine_count;
 	switch (selected_difficulty)
 	{
@@ -77,6 +77,9 @@ void spawn_mines()
 		break;
 	}
 	board_mine_count = mine_count;
+	uint16_t mines_coordinates[board_mine_count];
+	uint8_t mine_number = 0;
+
 	for (uint8_t i = 0; i < X_TILE_COUNT; i++)
 	{
 		for (uint8_t j = 0; j < Y_TILE_COUNT; j++)
@@ -98,10 +101,40 @@ void spawn_mines()
 		{
 			mine_field[x][y]=1;
 			mine_count--;
+
+			mines_coordinates[mine_number] = (uint16_t) (x<<8)|(y);
+			mine_number++;
 		}
 	}
 
 	filling_surrounding_tiles(map,posx,posy,0);
+
+	for (uint8_t i = 0; i < board_mine_count; i++) // Checking for mines, surrounded by another mines 
+	{
+		uint8_t x = mines_coordinates[i] >> 8;
+		uint8_t y = mines_coordinates[i] & 0x00FF;
+		uint8_t tiles_around_mine_map = searching_for_tiles_around_selected_one(x,y);
+		uint8_t tiles_around_mine = 0;
+		uint8_t mines_around_mine = 0;
+		if (tiles_around_mine_map & 0b10000000)	{if (mine_field[x-1][y-1]==1) {mines_around_mine++;} tiles_around_mine++;} 		
+		if (tiles_around_mine_map & 0b01000000) {if (mine_field[x][y-1]==1) {mines_around_mine++;} tiles_around_mine++;}
+		if (tiles_around_mine_map & 0b00100000) {if (mine_field[x+1][y-1]==1) {mines_around_mine++;} tiles_around_mine++;} 
+		if (tiles_around_mine_map & 0b00010000) {if (mine_field[x+1][y]==1) {mines_around_mine++;} tiles_around_mine++;}
+		if (tiles_around_mine_map & 0b00001000) {if (mine_field[x+1][y+1]==1) {mines_around_mine++;} tiles_around_mine++;}
+		if (tiles_around_mine_map & 0b00000100) {if (mine_field[x][y+1]==1) {mines_around_mine++;} tiles_around_mine++;}
+		if (tiles_around_mine_map & 0b00000010) {if (mine_field[x-1][y+1]==1) {mines_around_mine++;} tiles_around_mine++;}
+		if (tiles_around_mine_map & 0b00000001) {if (mine_field[x-1][y]==1) {mines_around_mine++;} tiles_around_mine++;} 
+		if (tiles_around_mine == mines_around_mine)
+		{
+			bad_seed_flag = true;
+		}
+	}
+
+	if (bad_seed_flag)
+	{
+		spawn_mines();
+	}
+	
 }
 
 uint8_t searching_for_tiles_around_selected_one(uint8_t x_number, uint8_t y_number)
