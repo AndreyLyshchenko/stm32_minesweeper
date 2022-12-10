@@ -12,9 +12,7 @@ int posx;
 int posy;
 bool select_mode_enabled;
 bool terminator; 
-extern bool game_started;
-extern bool ending_dialog;
-extern bool now_drawing;
+
 
 int __attribute((noreturn)) main(void)
 {

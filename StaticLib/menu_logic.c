@@ -1,9 +1,5 @@
 #include "logic.h"
 
-extern bool game_started;
-extern bool terminator;
-extern bool restart_flag;
-
 uint8_t menu_selector;
 uint8_t selected_difficulty;
 bool menu_select_mode_enabled;

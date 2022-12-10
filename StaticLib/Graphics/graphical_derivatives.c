@@ -1,10 +1,5 @@
 #include "graphical_derivatives.h"
 
-extern uint8_t tile_check_flag;
-extern uint8_t Bit_map[128][8];
-extern uint8_t Board[128][8];
-extern void (*piktograms[PIKTOGRAMM_ARRAY_LENGTH])(uint8_t,uint8_t);
-
 int setx;
 int sety;
 

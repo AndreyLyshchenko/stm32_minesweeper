@@ -1,7 +1,5 @@
 #include "buttons.h"
 
-extern bool terminator;
-
 int BtnClick(char IO_Port, int IO_Pin, char IO_Mode, uint32_t DefaultDelay, uint32_t HoldDelay) {
     int ErrCode = 0;
     GPIO_TypeDef* Port;

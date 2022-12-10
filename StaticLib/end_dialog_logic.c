@@ -1,14 +1,12 @@
 #include "logic.h"
 
-extern bool win_flag;
+
 
 void end_dialog_item_select(void);
 void draw_restart_select(void);
 void draw_menu_select(void);
 void change_selected_dialog_item(void);
 uint8_t dialog_selector;
-extern bool ending_dialog;
-extern bool terminator;
 bool restart_flag;
 
 

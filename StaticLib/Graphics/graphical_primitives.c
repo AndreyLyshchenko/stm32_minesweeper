@@ -336,7 +336,7 @@ void load_map(uint8_t  array_a[128][8], uint8_t  array_b[128][8])
 /// @image Array must be uint8_t (char) type and have folloving structure: 
 /// For image[8][2] = {1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,}:
 /// Array must be organized as:  Array[] = {0xF0, 0x0F};
-void load_image_from_array(uint8_t *image, uint8_t top_left_x, uint8_t top_left_y, uint8_t bottom_right_x, uint8_t bottom_right_y)
+void load_image_from_array(const uint8_t *image, uint8_t top_left_x, uint8_t top_left_y, uint8_t bottom_right_x, uint8_t bottom_right_y)
 {
     for (uint8_t y = top_left_y; y < (bottom_right_y+1); y++)
     { 

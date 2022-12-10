@@ -13,6 +13,6 @@
     void reset_map(uint8_t array[DISPLAY_WIDTH][DISPLAY_PAGE_COUNT]);
     void copy_map(uint8_t  array_a[DISPLAY_WIDTH][DISPLAY_PAGE_COUNT], uint8_t  array_b[DISPLAY_WIDTH][DISPLAY_PAGE_COUNT]);
     void load_map(uint8_t  array_a[DISPLAY_WIDTH][DISPLAY_PAGE_COUNT], uint8_t  array_b[DISPLAY_WIDTH][DISPLAY_PAGE_COUNT]);
-    void load_image_from_array(uint8_t *image, uint8_t top_left_x, uint8_t top_left_y, uint8_t bottom_right_x, uint8_t bottom_right_y);
+    void load_image_from_array(const uint8_t *image, uint8_t top_left_x, uint8_t top_left_y, uint8_t bottom_right_x, uint8_t bottom_right_y);
 
 #endif

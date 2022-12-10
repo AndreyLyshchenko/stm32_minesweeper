@@ -4,6 +4,7 @@
     #include <stm32f10x.h>
     #include <stdbool.h>
     #include "delay.h"
+    #include "constant_set.h"
 
     static bool LinkArrayIsSet = false;
 

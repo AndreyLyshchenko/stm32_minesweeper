@@ -14,9 +14,6 @@ bool ending_dialog;
 bool first_check;
 bool now_drawing;
 uint8_t ingame_selector;
-extern bool terminator;
-extern bool restart_flag;
-extern uint8_t selected_difficulty;
 
 void (*piktograms[PIKTOGRAMM_ARRAY_LENGTH])(uint8_t,uint8_t);
 

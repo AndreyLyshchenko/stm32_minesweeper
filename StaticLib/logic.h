@@ -7,17 +7,6 @@
     #include "buttons.h"
     #include "Graphics/graphical_derivatives.h"
 
-    extern uint8_t Board[128][8];
-    extern uint8_t Game_UI[128][8];
-    extern uint8_t Bit_map[128][8];
-    extern uint8_t menu_bit_map[128*8];
-    extern uint8_t loading_bit_map[128*8];
-    extern uint8_t game_end_win[128*8];
-    extern uint8_t game_end_loose[128*8];   
-    extern int posx;
-    extern int posy;
-    extern bool select_mode_enabled; 
-
     void inicialise_piktogramm_array(void);
     void inicialise_tile_memory(void);
     void reset_recursion_markers(void);
