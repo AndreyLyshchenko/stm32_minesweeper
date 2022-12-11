@@ -13,6 +13,8 @@
     void draw_menu_play_select(uint8_t color);
     void draw_menu_difficulty_select(uint8_t color);
     void draw_menu_difficulty(uint8_t difficulty);
+    void draw_restart_select(void);
+    void draw_menu_select(void); // BAD NAME
     void select_mode(uint8_t x_number, uint8_t y_number);
     void select_tile(uint8_t x_number, uint8_t y_number);
 

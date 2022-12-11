@@ -151,3 +151,15 @@ void draw_menu_difficulty_select(uint8_t color)
     line(101,46,96,51,color,VIRTUAL);  
     }
 }
+
+void draw_restart_select()
+{
+    rectangle(43,26,43+41,26+9,CL_WHITE,NO_FILL,VIRTUAL);
+    rectangle(43,26+11,43+41,26+9+11,CL_BLACK,NO_FILL,VIRTUAL);
+}
+
+void draw_menu_select()
+{
+    rectangle(43,26,43+41,26+9,CL_BLACK,NO_FILL,VIRTUAL);
+    rectangle(43,26+11,43+41,26+9+11,CL_WHITE,NO_FILL,VIRTUAL);
+}
