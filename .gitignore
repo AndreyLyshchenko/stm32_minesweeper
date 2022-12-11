@@ -8,6 +8,7 @@ build/
 *.hex
 *.map
 CMakeCache.txt
+cmake_install.cmake
 [M,m]akefile
 
 
