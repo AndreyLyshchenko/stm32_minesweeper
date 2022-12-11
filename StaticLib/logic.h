@@ -7,7 +7,7 @@
     #include "buttons.h"
     #include "Graphics/graphical_derivatives.h"
 
-    void inicialise_piktogramm_array(void);
+   // void inicialise_piktogramm_array(void);
     void inicialise_tile_memory(void);
     void reset_recursion_markers(void);
     uint8_t searching_for_tiles_around_selected_one(uint8_t x_number, uint8_t y_number);

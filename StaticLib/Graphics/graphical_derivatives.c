@@ -75,64 +75,66 @@ void draw_default_tile_borders(uint8_t x_number, uint8_t y_number)
 }
 
 void draw_piktogramm(uint8_t pictogramm_number_in_array, uint8_t x_number, uint8_t y_number)
-{
-    if (pictogramm_number_in_array == PIKTOGRAMM_OK)
+{   
+    if (pictogramm_number_in_array != PIKTOGRAMM_EMPTY_TILE)
     {
-        tile_check_flag = 1;
-    }
-    else 
-    {
-        tile_check_flag = 0;
+        if (pictogramm_number_in_array == PIKTOGRAMM_OK)
+        {
+            tile_check_flag = 1;
+        }
+        else 
+        {
+            tile_check_flag = 0;
+        }
     }
     get_tile_coordinates(x_number,y_number);
     load_piktogramm_from_array(ingame_piktogramms,pictogramm_number_in_array,setx,sety);
-
 }
 
-void draw_mine(uint8_t x_number, uint8_t y_number)
-{
-    tile_check_flag = 0;
+// void draw_mine(uint8_t x_number, uint8_t y_number)
+// {
+//     tile_check_flag = 0;
 
-    get_tile_coordinates(x_number,y_number);
+//     get_tile_coordinates(x_number,y_number);
 
-    load_piktogramm_from_array(ingame_piktogramms,4,setx,sety);
-}
-void draw_flag(uint8_t x_number, uint8_t y_number)
-{
-    tile_check_flag = 0;
+//     load_piktogramm_from_array(ingame_piktogramms,4,setx,sety);
+// }
+// void draw_flag(uint8_t x_number, uint8_t y_number)
+// {
+//     tile_check_flag = 0;
 
-    get_tile_coordinates(x_number,y_number);
+//     get_tile_coordinates(x_number,y_number);
 
-    load_piktogramm_from_array(ingame_piktogramms,0,setx,sety);
+//     load_piktogramm_from_array(ingame_piktogramms,0,setx,sety);
 
-}
+// }
 
-void draw_mistake(uint8_t x_number, uint8_t y_number)
-{
-    tile_check_flag = 0;
+// void draw_mistake(uint8_t x_number, uint8_t y_number)
+// {
+//     tile_check_flag = 0;
 
-    get_tile_coordinates(x_number,y_number);
+//     get_tile_coordinates(x_number,y_number);
 
-    load_piktogramm_from_array(ingame_piktogramms,5,setx,sety);
-}
+//     load_piktogramm_from_array(ingame_piktogramms,5,setx,sety);
+// }
 
-void draw_empty_tile(uint8_t x_number, uint8_t y_number)
-{
-    tile_check_flag = 0;
+// void draw_empty_tile(uint8_t x_number, uint8_t y_number)
+// {
+//     tile_check_flag = 0;
 
-    get_tile_coordinates(x_number,y_number);
+//     get_tile_coordinates(x_number,y_number);
 
-    rectangle(setx-1,sety-1,setx+5,sety+5,1,1,VIRTUAL);
-}
+//     rectangle(setx-1,sety-1,setx+5,sety+5,1,1,VIRTUAL);
+// }
 
-void draw_question_mark(uint8_t x_number, uint8_t y_number)
-{
-    tile_check_flag = 0;
+// void draw_question_mark(uint8_t x_number, uint8_t y_number)
+// {
+//     tile_check_flag = 0;
 
-    get_tile_coordinates(x_number,y_number);
+//     get_tile_coordinates(x_number,y_number);
 
-    load_piktogramm_from_array(ingame_piktogramms,1,setx,sety);   
-}
+//     load_piktogramm_from_array(ingame_piktogramms,1,setx,sety);   
+// }
 
 void select_mode(uint8_t x_number, uint8_t y_number)
 {
@@ -153,24 +155,24 @@ void select_mode(uint8_t x_number, uint8_t y_number)
     draw_changes();
 }
 
-void draw_ok(uint8_t x_number, uint8_t y_number)
-{
-    tile_check_flag = 1;
+// void draw_ok(uint8_t x_number, uint8_t y_number)
+// {
+//     tile_check_flag = 1;
 
-    get_tile_coordinates(x_number,y_number);
+//     get_tile_coordinates(x_number,y_number);
 
-    load_piktogramm_from_array(ingame_piktogramms,2,setx,sety);
+//     load_piktogramm_from_array(ingame_piktogramms,2,setx,sety);
 
-}
+// }
 
-void draw_back(uint8_t x_number, uint8_t y_number)
-{
-    tile_check_flag = 1; 
+// void draw_back(uint8_t x_number, uint8_t y_number)
+// {
+//     tile_check_flag = 1; 
 
-    get_tile_coordinates(x_number,y_number);
+//     get_tile_coordinates(x_number,y_number);
 
-    load_piktogramm_from_array(ingame_piktogramms,3,setx,sety);
-}
+//     load_piktogramm_from_array(ingame_piktogramms,3,setx,sety);
+// }
 
 void draw_number(uint8_t x_number, uint8_t y_number, uint8_t mine_count)
 {
@@ -178,5 +180,4 @@ void draw_number(uint8_t x_number, uint8_t y_number, uint8_t mine_count)
     get_tile_coordinates(x_number,y_number);
 
     load_piktogramm_from_array(ingame_numbers,mine_count,setx,sety);
-    
 }
