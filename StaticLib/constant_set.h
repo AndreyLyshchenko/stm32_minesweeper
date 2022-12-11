@@ -33,11 +33,8 @@
     #define PIKTOGRAMM_MISTAKE 5
 
     #define MENU_EASY 0
-    #define MENU_MEDIUM 1
-    #define MENU_HARD 2
-    #define MENU_EASY_POSITION 0
-    #define MENU_MEDIUM_POSITION 5
-    #define MENU_HARD_POSITION 10
+    #define MENU_MEDIUM 5
+    #define MENU_HARD 10
 
     struct set_info
     {
@@ -58,6 +55,7 @@
     extern bool restart_flag;
     extern bool select_mode_enabled; 
     extern bool now_drawing;
+    extern bool menu_select_mode_enabled;
 
     extern uint8_t selected_difficulty;
 

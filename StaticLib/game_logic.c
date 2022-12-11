@@ -52,14 +52,14 @@ void spawn_mines()
 	uint8_t mine_count;
 	switch (selected_difficulty)
 	{
-	case 0:
+	case MENU_EASY:
 		mine_count  = 8;
 		break;
-	case 1:
-		mine_count  = 12;
+	case MENU_MEDIUM:
+		mine_count  = 10;
 		break;
-	case 2:
-		mine_count  = 16;
+	case MENU_HARD:
+		mine_count  = 12;
 		break;		
 	default:
 		break;

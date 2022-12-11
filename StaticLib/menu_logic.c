@@ -4,93 +4,9 @@ uint8_t menu_selector;
 uint8_t selected_difficulty;
 bool menu_select_mode_enabled;
 
-void inicialise_difficulties_array();
 void menu_item_select(uint8_t menu_selector,uint8_t color);
 void menu_select_difficulty(void);
-void draw_menu_play_select(uint8_t color);
-void draw_menu_difficulty_select(uint8_t color);
-void draw_menu_difficulty(uint8_t difficulty);
-void draw_menu_easy();
-void draw_menu_medium();
-void draw_menu_hard();
 
-void (*difficulties[DIFFICULTIES_ARRAY_LENGTH])(void);
-
-
-/// @brief Initialising array of pointers on functions, wich used for drawing graphical primitives
-void inicialise_difficulties_array(void)
-{
-   difficulties[0]=draw_menu_easy;
-   difficulties[1]=draw_menu_medium;
-   difficulties[2]=draw_menu_hard;
-}
-
-void draw_menu_difficulty(uint8_t difficulty)
-{
-    uint8_t start_posx = 51;
-    uint8_t start_posy = 43;
-
-    rectangle(start_posx-17,start_posy-1,start_posx+39,start_posy+6,CL_BLACK,CL_BLACK,VIRTUAL);
-    load_piktogramm_from_array(menu_difficulty,difficulty,start_posx-7,start_posy);
-}
-
-void draw_menu_easy()
-{
-    uint8_t start_posx = 51;
-    uint8_t start_posy = 43;
-
-    rectangle(start_posx-17,start_posy-1,start_posx+39,start_posy+6,CL_BLACK,CL_BLACK,VIRTUAL);
-
-    load_piktogramm_from_array(menu_difficulty,MENU_EASY_POSITION,start_posx-7,start_posy);
-}
-
-void draw_menu_medium()
-{
-    uint8_t start_posx = 51;
-    uint8_t start_posy = 43;
-
-    rectangle(start_posx-17,start_posy-1,start_posx+39,start_posy+6,CL_BLACK,CL_BLACK,VIRTUAL); 
-
-    load_piktogramm_from_array(menu_difficulty,MENU_MEDIUM_POSITION,start_posx-7,start_posy);
-  
-}
-
-void draw_menu_hard()
-{
-    uint8_t start_posx = 51;
-    uint8_t start_posy = 43;
-
-    rectangle(start_posx-17,start_posy-1,start_posx+39,start_posy+6,CL_BLACK,CL_BLACK,VIRTUAL);
-    
-    load_piktogramm_from_array(menu_difficulty,MENU_HARD_POSITION,start_posx-7,start_posy);
-}
-
-
-void draw_menu_play_select(uint8_t color)
-{
-    rectangle(48,27,75,38,color,NO_FILL,VIRTUAL);
-}
-void draw_menu_difficulty_select(uint8_t color)
-{
-    rectangle(32,40,92,51,color,NO_FILL,VIRTUAL);
-    
-    if (menu_select_mode_enabled)
-    {
-    // Left arrow
-    line(30,40,30,51,color,VIRTUAL);
-    put_pixel(29,40,color,VIRTUAL);
-    line(28,40,23,45,color,VIRTUAL);
-    put_pixel(29,51,color,VIRTUAL);
-    line(23,46,28,51,color,VIRTUAL);    
-
-    // Right arrow
-    line(94,40,94,51,color,VIRTUAL);
-    put_pixel(95,40,color,VIRTUAL);
-    line(96,40,101,45,color,VIRTUAL);
-    put_pixel(95,51,color,VIRTUAL);
-    line(101,46,96,51,color,VIRTUAL);  
-    }
-}
 
 void menu_item_select(uint8_t menu_selector, uint8_t color)
 {
@@ -110,7 +26,7 @@ void run_main_menu(void)
 {
     if (!terminator)
     {
-        selected_difficulty = 1;
+        selected_difficulty = MENU_MEDIUM;
     }
     terminator = false;
     game_started = false;
@@ -120,7 +36,6 @@ void run_main_menu(void)
 
     put_pixel(0,0,CL_WHITE,REAL);
 
-    inicialise_difficulties_array();
     inicialise_info_about_graphic_arrays();
     display_fill(0x00);	
     load_image_from_array((uint8_t *) menu_bit_map,0,0,127,63);
@@ -183,15 +98,18 @@ void menu_click_left(void)
 {
     if (menu_select_mode_enabled) 
     {
-        if (selected_difficulty>0)
+        if (selected_difficulty == MENU_MEDIUM)
         {
-            selected_difficulty--;
+            selected_difficulty = MENU_EASY;
         }
-        else
+        else if (selected_difficulty == MENU_EASY)
         {
-            selected_difficulty = (DIFFICULTIES_ARRAY_LENGTH-1);
+            selected_difficulty = MENU_HARD;
         }
-
+        else 
+        {
+            selected_difficulty = MENU_MEDIUM;
+        }
         menu_select_difficulty();
     }
 }
@@ -199,13 +117,17 @@ void menu_click_right(void)
 {
     if (menu_select_mode_enabled) 
     {   
-        if (selected_difficulty < (DIFFICULTIES_ARRAY_LENGTH-1))
+        if (selected_difficulty == MENU_MEDIUM)
         {
-            selected_difficulty++;
+            selected_difficulty = MENU_HARD;
         }
-        else
+        else if (selected_difficulty == MENU_EASY)
         {
-            selected_difficulty = 0;
+            selected_difficulty = MENU_MEDIUM;
+        }
+        else 
+        {
+            selected_difficulty = MENU_EASY;
         }
         menu_select_difficulty();
     }
@@ -214,7 +136,7 @@ void menu_click_right(void)
 void menu_select_difficulty(void)
 {
     menu_item_select(menu_selector,CL_BLACK);
-    difficulties[selected_difficulty]();
+    draw_menu_difficulty(selected_difficulty);
     copy_map(Board,Bit_map);
     menu_item_select(menu_selector,CL_WHITE);
     draw_changes();

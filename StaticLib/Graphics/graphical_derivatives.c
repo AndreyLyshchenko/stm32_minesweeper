@@ -114,3 +114,40 @@ void draw_number(uint8_t x_number, uint8_t y_number, uint8_t mine_count)
 
     load_piktogramm_from_array(ingame_numbers,mine_count,setx,sety);
 }
+
+
+void draw_menu_difficulty(uint8_t difficulty)
+{
+    uint8_t start_posx = 51;
+    uint8_t start_posy = 43;
+
+    rectangle(start_posx-17,start_posy-1,start_posx+39,start_posy+6,CL_BLACK,CL_BLACK,VIRTUAL);
+    load_piktogramm_from_array(menu_difficulty,difficulty,start_posx-7,start_posy);
+}
+
+
+void draw_menu_play_select(uint8_t color)
+{
+    rectangle(48,27,75,38,color,NO_FILL,VIRTUAL);
+}
+void draw_menu_difficulty_select(uint8_t color)
+{
+    rectangle(32,40,92,51,color,NO_FILL,VIRTUAL);
+    
+    if (menu_select_mode_enabled)
+    {
+    // Left arrow
+    line(30,40,30,51,color,VIRTUAL);
+    put_pixel(29,40,color,VIRTUAL);
+    line(28,40,23,45,color,VIRTUAL);
+    put_pixel(29,51,color,VIRTUAL);
+    line(23,46,28,51,color,VIRTUAL);    
+
+    // Right arrow
+    line(94,40,94,51,color,VIRTUAL);
+    put_pixel(95,40,color,VIRTUAL);
+    line(96,40,101,45,color,VIRTUAL);
+    put_pixel(95,51,color,VIRTUAL);
+    line(101,46,96,51,color,VIRTUAL);  
+    }
+}
