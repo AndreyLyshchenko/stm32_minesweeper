@@ -214,6 +214,7 @@ void run_main_menu(void)
     put_pixel(0,0,CL_WHITE,REAL);
 
     inicialise_difficulties_array();
+    inicialise_info_about_piktogramm_arrays();
     display_fill(0x00);	
     load_image_from_array((uint8_t *) menu_bit_map,0,0,127,63);
     copy_map(Board,Bit_map);
@@ -225,8 +226,6 @@ void run_main_menu(void)
     {
         start_game();
     }
-
-
 }
 
 void menu_click_mid(void)

@@ -25,6 +25,21 @@
     #define FILL_WHITE 1
     #define NO_FILL 3
 
+    #define PIKTOGRAMM_FLAG 0
+    #define PIKTOGRAMM_QUESTION_MARK 1
+    #define PIKTOGRAMM_OK 2
+    #define PIKTOGRAMM_EMPTY_TILE 3
+    #define PIKTOGRAMM_MINE 4
+    #define PIKTOGRAMM_MISTAKE 5
+
+    struct set_info
+    {
+        uint8_t item_count;
+        uint8_t x_size;
+        uint8_t y_size;
+        const uint8_t *pointer;
+    };
+
     extern void (*piktograms[PIKTOGRAMM_ARRAY_LENGTH])(uint8_t,uint8_t);
 
     extern uint8_t tile_check_flag;
@@ -48,6 +63,13 @@
     extern const uint8_t menu_bit_map[128*8];
     extern const uint8_t loading_bit_map[128*8];
     extern const uint8_t game_end_win[128*8];
-    extern const uint8_t game_end_loose[128*8];   
+    extern const uint8_t game_end_loose[128*8];
+    extern const uint8_t game_piktogramms[8*7];
+    extern const uint8_t game_numbers[9*7];
+
+    extern struct set_info ingame_piktogramms;
+    extern struct set_info ingame_numbers;
+
+    
 
 #endif

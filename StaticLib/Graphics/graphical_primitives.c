@@ -346,3 +346,15 @@ void load_image_from_array(const uint8_t *image, uint8_t top_left_x, uint8_t top
         }
     }
 }
+
+void load_piktogramm_from_array(struct set_info info, uint8_t position_in_set, uint8_t screen_x, uint8_t screen_y)
+{
+    for (uint8_t x = 0; x < info.x_size; x++)
+    {
+        for (uint8_t y = 0; y < info.y_size; y++)
+        {
+            put_pixel(screen_x+x-1,screen_y+y-1,(((*(info.pointer+((x/8)+(y*info.item_count)+position_in_set)))>>(7-x))&0b1),VIRTUAL);
+        }
+    }
+    
+}

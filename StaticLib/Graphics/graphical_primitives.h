@@ -14,5 +14,6 @@
     void copy_map(uint8_t  array_a[DISPLAY_WIDTH][DISPLAY_PAGE_COUNT], uint8_t  array_b[DISPLAY_WIDTH][DISPLAY_PAGE_COUNT]);
     void load_map(uint8_t  array_a[DISPLAY_WIDTH][DISPLAY_PAGE_COUNT], uint8_t  array_b[DISPLAY_WIDTH][DISPLAY_PAGE_COUNT]);
     void load_image_from_array(const uint8_t *image, uint8_t top_left_x, uint8_t top_left_y, uint8_t bottom_right_x, uint8_t bottom_right_y);
-
+    void load_piktogramm_from_array(struct set_info info, uint8_t position_in_set, uint8_t screen_x, uint8_t screen_y);
+    void inicialise_info_about_piktogramm_arrays();
 #endif

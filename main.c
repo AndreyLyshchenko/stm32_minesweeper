@@ -20,7 +20,6 @@ int __attribute((noreturn)) main(void)
 	preconfigure_microcontroller();
 	preconfigure_SPI();
 	select_mode_enabled = false;
-	
 	while (1)
 	{
 		run_main_menu();

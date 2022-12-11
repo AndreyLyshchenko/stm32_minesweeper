@@ -64,10 +64,10 @@ set(SOURCE_FILES
     StaticLib/game_logic.c
     StaticLib/menu_logic.c
     StaticLib/end_dialog_logic.c
-    StaticLib/Graphics/menu_title.c
     StaticLib/Graphics/menu_bit_map.c
     StaticLib/Graphics/game_end.c
     StaticLib/Graphics/loading_bit_map.c
+    StaticLib/Graphics/game_piktogramms.c
     StaticLib/Graphics/graphical_primitives.h
     StaticLib/Graphics/graphical_primitives.c
     StaticLib/Graphics/graphical_derivatives.h

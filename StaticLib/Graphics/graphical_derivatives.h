@@ -8,6 +8,8 @@
     void draw_board(void);
     void draw_selection (uint8_t x_number, uint8_t y_number);
     void draw_default_tile_borders(uint8_t x_number, uint8_t y_number);
+    void draw_piktogramm(uint8_t pictogramm_number_in_array, uint8_t x_number, uint8_t y_number);
+
     void draw_mine(uint8_t x_number, uint8_t y_number);
     void draw_flag(uint8_t x_number, uint8_t y_number);
     void draw_mistake(uint8_t x_number, uint8_t y_number);
