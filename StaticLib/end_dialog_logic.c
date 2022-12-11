@@ -1,7 +1,5 @@
 #include "logic.h"
 
-
-
 void end_dialog_item_select(void);
 void draw_restart_select(void);
 void draw_menu_select(void);

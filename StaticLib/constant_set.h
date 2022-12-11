@@ -32,6 +32,13 @@
     #define PIKTOGRAMM_MINE 4
     #define PIKTOGRAMM_MISTAKE 5
 
+    #define MENU_EASY 0
+    #define MENU_MEDIUM 1
+    #define MENU_HARD 2
+    #define MENU_EASY_POSITION 0
+    #define MENU_MEDIUM_POSITION 5
+    #define MENU_HARD_POSITION 10
+
     struct set_info
     {
         uint8_t item_count;
@@ -39,8 +46,6 @@
         uint8_t y_size;
         const uint8_t *pointer;
     };
-
-    extern void (*piktograms[PIKTOGRAMM_ARRAY_LENGTH])(uint8_t,uint8_t);
 
     extern uint8_t tile_check_flag;
     extern uint8_t Bit_map[128][8];
@@ -66,10 +71,10 @@
     extern const uint8_t game_end_loose[128*8];
     extern const uint8_t game_piktogramms[8*7];
     extern const uint8_t game_numbers[9*7];
+    extern const uint8_t difficulties_set[15*8];
 
     extern struct set_info ingame_piktogramms;
     extern struct set_info ingame_numbers;
-
-    
+    extern struct set_info menu_difficulty;
 
 #endif

@@ -353,8 +353,26 @@ void load_piktogramm_from_array(struct set_info info, uint8_t position_in_set, u
     {
         for (uint8_t y = 0; y < info.y_size; y++)
         {
-            put_pixel(screen_x+x-1,screen_y+y-1,(((*(info.pointer+((x/8)+(y*info.item_count)+position_in_set)))>>(7-x))&0b1),VIRTUAL);
+            put_pixel(screen_x+x-1,screen_y+y-1,(((*(info.pointer+((x/8)+(y*info.item_count)+position_in_set)))>>(7-(x%8)))&0b1),VIRTUAL);
         }
     }
     
+}
+
+void inicialise_info_about_graphic_arrays()
+{
+    ingame_piktogramms.item_count = 6;
+    ingame_piktogramms.x_size = 7;
+    ingame_piktogramms.y_size =7;
+    ingame_piktogramms.pointer = game_piktogramms;
+
+    ingame_numbers.item_count = 9;
+    ingame_numbers.x_size = 7;
+    ingame_numbers.y_size =7;
+    ingame_numbers.pointer = game_numbers;
+
+    menu_difficulty.item_count = 3*5;
+    menu_difficulty.x_size = 40;
+    menu_difficulty.y_size = 8;
+    menu_difficulty.pointer = difficulties_set; 
 }

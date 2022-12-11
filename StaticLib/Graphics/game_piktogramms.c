@@ -1,19 +1,5 @@
 #include "graphical_primitives.h"
 
-void inicialise_info_about_piktogramm_arrays()
-{
-    ingame_piktogramms.item_count = 6;
-    ingame_piktogramms.x_size = 7;
-    ingame_piktogramms.y_size =7;
-    ingame_piktogramms.pointer = game_piktogramms;
-
-    ingame_numbers.item_count = 9;
-    ingame_numbers.x_size = 7;
-    ingame_numbers.y_size =7;
-    ingame_numbers.pointer = game_numbers;
-}
-
-
 // Positions list (6 items):
 // See constant_set.h
 // PIKTOGRAMM_FLAG

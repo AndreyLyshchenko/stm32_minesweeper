@@ -29,15 +29,6 @@ void inicialise_tile_memory(void)
     }
 }
 
-/// @brief Initialising array of pointers on functions, wich used for drawing graphical primitives
-// void inicialise_piktogramm_array(void)
-// {
-//     piktograms[0]=draw_flag;
-//     piktograms[1]=draw_question_mark;
-//     piktograms[2]=draw_ok;
-//     piktograms[3]=draw_empty_tile;
-// }
-
 void reset_recursion_markers(void)
 {
 	for (uint8_t x = 0; x < X_TILE_COUNT; x++)
@@ -263,7 +254,6 @@ void start_game(void)
 	restart_flag = false;
     posx=0;
 	posy=0;
-	//inicialise_piktogramm_array();
 	inicialise_tile_memory();
 	ingame_selector = 0;
 
@@ -316,9 +306,9 @@ void ingame_click_mid(void)
 				
 			} else
 			{
-				draw_piktogramm(PIKTOGRAMM_EMPTY_TILE,posx,posy);//draw_empty_tile(posx,posy);
+				draw_piktogramm(PIKTOGRAMM_EMPTY_TILE,posx,posy);
 				ingame_selector=tile_memory[posx][posy];
-				draw_piktogramm(ingame_selector,posx,posy); //	piktograms[ingame_selector](posx,posy);
+				draw_piktogramm(ingame_selector,posx,posy);
 				draw_selection(posx,posy);
 				draw_changes();
 			}
@@ -329,7 +319,6 @@ void ingame_click_mid(void)
 	{
 		ending_dialog = true;
 		create_end_dialog_window();
-		//terminator = true;
 	}	
 }
 
@@ -339,11 +328,9 @@ void open_tile(uint8_t x_number, uint8_t y_number)
 	open_tiles_counter+=1;
 	recursion_marker[x_number][y_number] = 1;
 	tile_memory[x_number][y_number] = PIKTOGRAMM_ARRAY_LENGTH; // Marking tile as opend (to prevent modifing manually)
-	//draw_piktogramm(PIKTOGRAMM_EMPTY_TILE,posx,posy);//draw_empty_tile(x_number,y_number);
 	draw_default_tile_borders(x_number,y_number);
 	draw_number(x_number,y_number,how_many_mines_around[x_number][y_number]);
 	copy_map(Board,Bit_map);
-	//draw_changes();
 	if (how_many_mines_around[x_number][y_number]==0)
 	{
 		uint8_t map = searching_for_tiles_around_selected_one(x_number,y_number);
@@ -416,9 +403,9 @@ void ingame_click_left(void)
 		{
 			ingame_selector = (PIKTOGRAMM_ARRAY_LENGTH-1);
 		}
-		draw_piktogramm(PIKTOGRAMM_EMPTY_TILE,posx,posy);//draw_empty_tile(posx,posy);
+		draw_piktogramm(PIKTOGRAMM_EMPTY_TILE,posx,posy);
 		tile_memory[posx][posy] = ingame_selector;
-		draw_piktogramm(ingame_selector,posx,posy);//piktograms[ingame_selector](posx,posy);
+		draw_piktogramm(ingame_selector,posx,posy);
 		draw_changes();
 	}
 }
@@ -448,9 +435,9 @@ void ingame_click_right(void)
 		{
 			ingame_selector = 0;
 		}
-		draw_piktogramm(PIKTOGRAMM_EMPTY_TILE,posx,posy);//draw_empty_tile(posx,posy);
+		draw_piktogramm(PIKTOGRAMM_EMPTY_TILE,posx,posy);
 		tile_memory[posx][posy] = ingame_selector;
-		draw_piktogramm(ingame_selector,posx,posy);//piktograms[ingame_selector](posx,posy);
+		draw_piktogramm(ingame_selector,posx,posy);
 		draw_changes();
 	}
 }

@@ -9,6 +9,7 @@ void menu_item_select(uint8_t menu_selector,uint8_t color);
 void menu_select_difficulty(void);
 void draw_menu_play_select(uint8_t color);
 void draw_menu_difficulty_select(uint8_t color);
+void draw_menu_difficulty(uint8_t difficulty);
 void draw_menu_easy();
 void draw_menu_medium();
 void draw_menu_hard();
@@ -24,6 +25,15 @@ void inicialise_difficulties_array(void)
    difficulties[2]=draw_menu_hard;
 }
 
+void draw_menu_difficulty(uint8_t difficulty)
+{
+    uint8_t start_posx = 51;
+    uint8_t start_posy = 43;
+
+    rectangle(start_posx-17,start_posy-1,start_posx+39,start_posy+6,CL_BLACK,CL_BLACK,VIRTUAL);
+    load_piktogramm_from_array(menu_difficulty,difficulty,start_posx-7,start_posy);
+}
+
 void draw_menu_easy()
 {
     uint8_t start_posx = 51;
@@ -31,39 +41,7 @@ void draw_menu_easy()
 
     rectangle(start_posx-17,start_posy-1,start_posx+39,start_posy+6,CL_BLACK,CL_BLACK,VIRTUAL);
 
-    // E
-    line(start_posx,start_posy,start_posx+3,start_posy,CL_WHITE,VIRTUAL);
-    line(start_posx,start_posy,start_posx,start_posy+5,CL_WHITE,VIRTUAL);
-    line(start_posx,start_posy+3,start_posx+2,start_posy+3,CL_WHITE,VIRTUAL);
-    line(start_posx,start_posy+5,start_posx+3,start_posy+5,CL_WHITE,VIRTUAL);
-    
-    start_posx+=6;
-    // A
-    line(start_posx,start_posy+1,start_posx,start_posy+5,CL_WHITE,VIRTUAL);
-    put_pixel(start_posx+1,start_posy,CL_WHITE,VIRTUAL);
-    put_pixel(start_posx+2,start_posy,CL_WHITE,VIRTUAL);
-    put_pixel(start_posx+1,start_posy+3,CL_WHITE,VIRTUAL);
-    put_pixel(start_posx+2,start_posy+3,CL_WHITE,VIRTUAL);
-    line(start_posx+3,start_posy+1,start_posx+3,start_posy+5,CL_WHITE,VIRTUAL);
-
-    start_posx+=6;
-    // S
-    put_pixel(start_posx+1,start_posy,CL_WHITE,VIRTUAL);
-    put_pixel(start_posx+2,start_posy,CL_WHITE,VIRTUAL);
-    put_pixel(start_posx,start_posy+1,CL_WHITE,VIRTUAL);
-    put_pixel(start_posx+3,start_posy+1,CL_WHITE,VIRTUAL);
-    put_pixel(start_posx+1,start_posy+2,CL_WHITE,VIRTUAL);
-    put_pixel(start_posx+2,start_posy+3,CL_WHITE,VIRTUAL);
-    put_pixel(start_posx,start_posy+4,CL_WHITE,VIRTUAL);
-    put_pixel(start_posx+3,start_posy+4,CL_WHITE,VIRTUAL);
-    put_pixel(start_posx+1,start_posy+5,CL_WHITE,VIRTUAL);
-    put_pixel(start_posx+2,start_posy+5,CL_WHITE,VIRTUAL);
-
-    start_posx+=6;
-    // Y
-    rectangle(start_posx,start_posy,start_posx+3,start_posy+5,CL_WHITE,CL_WHITE,VIRTUAL);
-    rectangle(start_posx+1,start_posy,start_posx+2,start_posy+2,CL_BLACK,NO_FILL,VIRTUAL);
-    line(start_posx,start_posy+4,start_posx+2,start_posy+4,CL_BLACK,VIRTUAL);
+    load_piktogramm_from_array(menu_difficulty,MENU_EASY_POSITION,start_posx-7,start_posy);
 }
 
 void draw_menu_medium()
@@ -73,50 +51,8 @@ void draw_menu_medium()
 
     rectangle(start_posx-17,start_posy-1,start_posx+39,start_posy+6,CL_BLACK,CL_BLACK,VIRTUAL); 
 
-    start_posx -=7;
-
-    // M
-    line(start_posx,start_posy,start_posx,start_posy+5,CL_WHITE,VIRTUAL);
-    put_pixel(start_posx+1,start_posy+1,CL_WHITE,VIRTUAL);
-    put_pixel(start_posx+2,start_posy+2,CL_WHITE,VIRTUAL);
-    put_pixel(start_posx+3,start_posy+1,CL_WHITE,VIRTUAL);
-    line(start_posx+4,start_posy,start_posx+4,start_posy+5,CL_WHITE,VIRTUAL);
-
-    start_posx+=7;
-
-    // E
-    line(start_posx,start_posy,start_posx+3,start_posy,CL_WHITE,VIRTUAL);
-    line(start_posx,start_posy,start_posx,start_posy+5,CL_WHITE,VIRTUAL);
-    line(start_posx,start_posy+3,start_posx+2,start_posy+3,CL_WHITE,VIRTUAL);
-    line(start_posx,start_posy+5,start_posx+3,start_posy+5,CL_WHITE,VIRTUAL);
-
-    start_posx+=6;
-    
-    // D
-    line(start_posx,start_posy,start_posx,start_posy+5,CL_WHITE,VIRTUAL);
-    line(start_posx+1,start_posy,start_posx+2,start_posy,CL_WHITE,VIRTUAL);
-    line(start_posx+1,start_posy+5,start_posx+2,start_posy+5,CL_WHITE,VIRTUAL);
-    line(start_posx+3,start_posy+1,start_posx+3,start_posy+4,CL_WHITE,VIRTUAL);
-
-    start_posx+=6;
-    // I
-    line(start_posx,start_posy,start_posx+2,start_posy,CL_WHITE,VIRTUAL);
-    line(start_posx,start_posy+5,start_posx+2,start_posy+5,CL_WHITE,VIRTUAL);
-    line(start_posx+1,start_posy+1,start_posx+1,start_posy+4,CL_WHITE,VIRTUAL);
-
-    start_posx+=5;
-    // U
-    line(start_posx,start_posy,start_posx,start_posy+4,CL_WHITE,VIRTUAL);
-    line(start_posx+1,start_posy+5,start_posx+2,start_posy+5,CL_WHITE,VIRTUAL);
-    line(start_posx+3,start_posy,start_posx+3,start_posy+4,CL_WHITE,VIRTUAL);
-
-    start_posx+=6;
-    // M
-    line(start_posx,start_posy,start_posx,start_posy+5,CL_WHITE,VIRTUAL);
-    put_pixel(start_posx+1,start_posy+1,CL_WHITE,VIRTUAL);
-    put_pixel(start_posx+2,start_posy+2,CL_WHITE,VIRTUAL);
-    put_pixel(start_posx+3,start_posy+1,CL_WHITE,VIRTUAL);
-    line(start_posx+4,start_posy,start_posx+4,start_posy+5,CL_WHITE,VIRTUAL);
+    load_piktogramm_from_array(menu_difficulty,MENU_MEDIUM_POSITION,start_posx-7,start_posy);
+  
 }
 
 void draw_menu_hard()
@@ -125,38 +61,9 @@ void draw_menu_hard()
     uint8_t start_posy = 43;
 
     rectangle(start_posx-17,start_posy-1,start_posx+39,start_posy+6,CL_BLACK,CL_BLACK,VIRTUAL);
-
-    // H
-    line(start_posx,start_posy,start_posx,start_posy+5,CL_WHITE,VIRTUAL);
-    line(start_posx+1,start_posy+3,start_posx+2,start_posy+3,CL_WHITE,VIRTUAL);
-    line(start_posx+3,start_posy,start_posx+3,start_posy+5,CL_WHITE,VIRTUAL);
-
-    start_posx+= 6;
-    // A
-    line(start_posx,start_posy+1,start_posx,start_posy+5,CL_WHITE,VIRTUAL);
-    put_pixel(start_posx+1,start_posy,CL_WHITE,VIRTUAL);
-    put_pixel(start_posx+2,start_posy,CL_WHITE,VIRTUAL);
-    put_pixel(start_posx+1,start_posy+3,CL_WHITE,VIRTUAL);
-    put_pixel(start_posx+2,start_posy+3,CL_WHITE,VIRTUAL);
-    line(start_posx+3,start_posy+1,start_posx+3,start_posy+5,CL_WHITE,VIRTUAL);
-
-    start_posx+=6;
-    // R
-    line(start_posx,start_posy,start_posx,start_posy+5,CL_WHITE,VIRTUAL);
-    line(start_posx+1,start_posy,start_posx+2,start_posy,CL_WHITE,VIRTUAL);
-    put_pixel(start_posx+3,start_posy+1,CL_WHITE,VIRTUAL);
-    line(start_posx+1,start_posy+2,start_posx+3,start_posy+2,CL_WHITE,VIRTUAL);
-    put_pixel(start_posx+2,start_posy+3,CL_WHITE,VIRTUAL);
-    line(start_posx+3,start_posy+4,start_posx+3,start_posy+5,CL_WHITE,VIRTUAL);
     
-    start_posx+=6;
-    // D
-    line(start_posx,start_posy,start_posx,start_posy+5,CL_WHITE,VIRTUAL);
-    line(start_posx+1,start_posy,start_posx+2,start_posy,CL_WHITE,VIRTUAL);
-    line(start_posx+1,start_posy+5,start_posx+2,start_posy+5,CL_WHITE,VIRTUAL);
-    line(start_posx+3,start_posy+1,start_posx+3,start_posy+4,CL_WHITE,VIRTUAL);
+    load_piktogramm_from_array(menu_difficulty,MENU_HARD_POSITION,start_posx-7,start_posy);
 }
-
 
 
 void draw_menu_play_select(uint8_t color)
@@ -214,7 +121,7 @@ void run_main_menu(void)
     put_pixel(0,0,CL_WHITE,REAL);
 
     inicialise_difficulties_array();
-    inicialise_info_about_piktogramm_arrays();
+    inicialise_info_about_graphic_arrays();
     display_fill(0x00);	
     load_image_from_array((uint8_t *) menu_bit_map,0,0,127,63);
     copy_map(Board,Bit_map);
