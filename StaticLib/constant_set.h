@@ -66,7 +66,7 @@
     extern const uint8_t menu_bit_map[128*8];
     extern const uint8_t loading_bit_map[128*8];
     extern const uint8_t game_end_win[128*8];
-    extern const uint8_t game_end_loose[128*8];
+    extern const uint8_t game_end_lose[128*8];
     extern const uint8_t game_piktogramms[8*7];
     extern const uint8_t game_numbers[9*7];
     extern const uint8_t difficulties_set[15*8];

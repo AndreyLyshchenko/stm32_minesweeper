@@ -14,7 +14,7 @@ void create_end_dialog_window(void)
 	}
 	else
 	{
-		load_image_from_array(game_end_loose,30,12,127-30,64-14);
+		load_image_from_array(game_end_lose,30,12,127-30,64-14);
 	}
 	copy_map(Board,Bit_map);
 	draw_changes();
