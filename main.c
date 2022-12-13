@@ -12,10 +12,11 @@ int posx;
 int posy;
 bool select_mode_enabled;
 bool terminator; 
-
+void inicialize_click_funktions_array();
 
 int __attribute((noreturn)) main(void)
 {
+	inicialize_click_funktions_array();
 	terminator = false;
 	preconfigure_microcontroller();
 	preconfigure_SPI();
@@ -39,96 +40,73 @@ void TIM2_IRQHandler(void)
 	}
 }
 
-void ButtonClick_A_8_Down() //mid
+void (*click_function[15])();
+
+void inicialize_click_funktions_array()
+{
+	click_function[0] = end_dialog_click_mid;
+	click_function[1] = ingame_click_mid;
+	click_function[2] = menu_click_mid;
+
+	click_function[3] = end_dialog_click_up;
+	click_function[4] = ingame_click_up;
+	click_function[5] = menu_click_up;
+	
+	click_function[6] = end_dialog_click_down;
+	click_function[7] = ingame_click_down;
+	click_function[8] = menu_click_down;
+
+	click_function[9] = end_dialog_click_left;
+	click_function[10] = ingame_click_left;
+	click_function[11] = menu_click_left;
+
+	click_function[12] = end_dialog_click_right;
+	click_function[13] = ingame_click_right;
+	click_function[14] = menu_click_right;
+}
+
+void use_click_function(uint8_t pressed_button)
 {
 	if (game_started)
 	{
 		if (ending_dialog)
 		{
-			end_dialog_click_mid();
+			// End dialog
+			click_function[pressed_button]();
 		}
 		else
 		{
-			ingame_click_mid();
+			// Ingame
+			click_function[pressed_button+1]();
 		}
 	}
 	else
 	{
-		menu_click_mid();
+		// Menu
+		click_function[pressed_button+2]();
 	}
+}
+
+void ButtonClick_A_8_Down() //mid
+{
+	use_click_function(CLICK_MID);
 }
 
 void ButtonClick_B_12_Down() //up
 {	
-	if (game_started)
-	{
-		if (ending_dialog)
-		{
-			end_dialog_click_up();
-		}
-		else
-		{
-			ingame_click_up();
-		}
-	}
-	else
-	{
-		menu_click_up();
-	}	
+	use_click_function(CLICK_UP);
 }
 
 void ButtonClick_B_13_Down() //down
 {	
-	if (game_started)
-	{
-		if (ending_dialog)
-		{
-			end_dialog_click_down();
-		}
-		else
-		{
-			ingame_click_down();
-		}
-	}
-	else
-	{
-		menu_click_down();
-	}
+	use_click_function(CLICK_DOWN);
 }
 void ButtonClick_B_14_Down() //left
 {	
-	if (game_started)
-	{
-		if (ending_dialog)
-		{
-			end_dialog_click_left();
-		}
-		else
-		{
-			ingame_click_left();
-		}
-	}
-	else
-	{
-		menu_click_left();
-	}
+	use_click_function(CLICK_LEFT);
 }
 void ButtonClick_B_15_Down() //right
 {	
-	if (game_started)
-	{
-		if (ending_dialog)
-		{
-			end_dialog_click_right();
-		}
-		else
-		{
-			ingame_click_right();
-		}
-	}
-	else
-	{
-		menu_click_right();
-	}
+	use_click_function(CLICK_RIGHT);
 }
 

@@ -35,6 +35,12 @@
     #define MENU_EASY 0
     #define MENU_MEDIUM 5
     #define MENU_HARD 10
+        
+    #define CLICK_MID 0
+    #define CLICK_UP 3
+    #define CLICK_DOWN 6
+    #define CLICK_LEFT 9
+    #define CLICK_RIGHT 12
 
     struct set_info
     {
