@@ -12,8 +12,6 @@
 
     void InitializingLinkArray();
 
-    void transfer_control_to_buttons();
-
     int BtnClick(char IO_Port, int IO_Pin, char IO_Mode, uint32_t DefaultDelay, uint32_t HoldDelay);
 
     // PORT A

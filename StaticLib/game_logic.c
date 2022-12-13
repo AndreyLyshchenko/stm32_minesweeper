@@ -15,7 +15,6 @@ bool first_check;
 bool now_drawing;
 uint8_t ingame_selector;
 
-void (*piktograms[PIKTOGRAMM_ARRAY_LENGTH])(uint8_t,uint8_t);
 
 
 void inicialise_tile_memory(void)

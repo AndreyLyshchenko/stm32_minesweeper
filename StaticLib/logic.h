@@ -7,7 +7,6 @@
     #include "buttons.h"
     #include "Graphics/graphical_derivatives.h"
 
-   // void inicialise_piktogramm_array(void);
     void inicialise_tile_memory(void);
     void reset_recursion_markers(void);
     uint8_t searching_for_tiles_around_selected_one(uint8_t x_number, uint8_t y_number);
@@ -15,6 +14,10 @@
     void open_tile(uint8_t x_number, uint8_t y_number);
     void filling_surrounding_tiles(uint8_t map, uint8_t x_number, uint8_t y_number, uint8_t filler);
     void calculate_how_many_mines_around(void);
+
+    void inicialize_click_funktions_array();
+    void use_click_function(uint8_t pressed_button);
+    void transfer_control_to_buttons();
     
     void game_over(void);
     void win_check(void);

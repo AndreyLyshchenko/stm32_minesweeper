@@ -101,38 +101,6 @@ int BtnClick(char IO_Port, int IO_Pin, char IO_Mode, uint32_t DefaultDelay, uint
 return ErrCode;
 }
 
-void transfer_control_to_buttons()
-{
-    // All "button press" events organized in hierarchial order because of their mutual exclusiveness
-
-	// Function BtnCLick is triggering Click event, according to its input data:
-	// Port, Pin, ClickMode(OnPress -"D", OnRelease - "U", While holding -"H"), 
-	// Defalut delay (for "D" and "U" mode) and Hold delay (for "H" mode).
-	// Integer, returned by function, provides information about internal errors.
-	// ErrCodes 7,8,9 are indicating successfull event generatin after corresponding button was pressed,
-	// 0 - corresponding button was not pressed.
-
-	while (1)
-	{
-		if (BtnClick('A',8,'D',10000,10000)==7){} // MID BUTTON	
-		else if (BtnClick('B',12,'D',10000,10000)==7){} // UP BUTTON
-			else if (BtnClick('B',13,'D',10000,10000)==7){} // DOWN BUTTON
-				else if (BtnClick('B',14,'D',10000,10000)==7){} // LEFT BUTTON
-					else if (BtnClick('B',15,'D',10000,10000)==7){} // RIGHT BUTTON
-						else
-						{
-                            if (terminator!=true)
-                            {
-                                delay_us(333); // NOTHING
-                            }
-                            else
-                            {
-                                return;
-                            }			
-						}
-	}
-}
-
 void InitializingLinkArray() 
 {
     // DOWN
