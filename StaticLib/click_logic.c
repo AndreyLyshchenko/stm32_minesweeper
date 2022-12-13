@@ -2,7 +2,7 @@
 
 void (*click_function[15])();
 
-void inicialize_click_funktions_array()
+void initialize_click_funktions_array()
 {
 	click_function[0] = end_dialog_click_mid;
 	click_function[1] = ingame_click_mid;

@@ -12,11 +12,11 @@ int posx;
 int posy;
 bool select_mode_enabled;
 bool terminator; 
-void inicialize_click_funktions_array();
+
 
 int __attribute((noreturn)) main(void)
 {
-	inicialize_click_funktions_array();
+	initialize_click_funktions_array();
 	terminator = false;
 	preconfigure_microcontroller();
 	preconfigure_SPI();

@@ -15,7 +15,7 @@
     void filling_surrounding_tiles(uint8_t map, uint8_t x_number, uint8_t y_number, uint8_t filler);
     void calculate_how_many_mines_around(void);
 
-    void inicialize_click_funktions_array();
+    void initialize_click_funktions_array();
     void use_click_function(uint8_t pressed_button);
     void transfer_control_to_buttons();
     
