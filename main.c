@@ -1,11 +1,11 @@
 #include <stdint.h>
 #include <stm32f10x.h>
 #include <stdbool.h>
-#include "StaticLib/delay.h"
-#include "StaticLib/buttons.h"
-#include "StaticLib/spi.h"
-#include "StaticLib/configuration.h"
-#include "StaticLib/logic.h"
+#include "Sources/delay.h"
+#include "Sources/buttons.h"
+#include "Sources/spi.h"
+#include "Sources/configuration.h"
+#include "Sources/logic.h"
 
 
 int posx;

@@ -51,28 +51,28 @@ set(SOURCE_FILES
     stm32/startup/startup_stm32f10x_md.c # Choose startup file for your MCU
     stm32/system_stm32f10x.c
     syscalls/syscalls.c
-    StaticLib/constant_set.h
-    StaticLib/delay.c
-    StaticLib/delay.h
-    StaticLib/buttons.h
-    StaticLib/buttons.c
-    StaticLib/spi.h
-    StaticLib/spi.c
-    StaticLib/configuration.h
-    StaticLib/configuration.c
-    StaticLib/logic.h
-    StaticLib/game_logic.c
-    StaticLib/menu_logic.c
-    StaticLib/end_dialog_logic.c
-    StaticLib/click_logic.c
-    StaticLib/Graphics/menu_bit_map.c
-    StaticLib/Graphics/game_end.c
-    StaticLib/Graphics/loading_bit_map.c
-    StaticLib/Graphics/game_piktogramms.c
-    StaticLib/Graphics/graphical_primitives.h
-    StaticLib/Graphics/graphical_primitives.c
-    StaticLib/Graphics/graphical_derivatives.h
-    StaticLib/Graphics/graphical_derivatives.c
+    Sources/constant_set.h
+    Sources/delay.c
+    Sources/delay.h
+    Sources/buttons.h
+    Sources/buttons.c
+    Sources/spi.h
+    Sources/spi.c
+    Sources/configuration.h
+    Sources/configuration.c
+    Sources/logic.h
+    Sources/game_logic.c
+    Sources/menu_logic.c
+    Sources/end_dialog_logic.c
+    Sources/click_logic.c
+    Sources/Graphics/menu_bit_map.c
+    Sources/Graphics/game_end.c
+    Sources/Graphics/loading_bit_map.c
+    Sources/Graphics/game_piktogramms.c
+    Sources/Graphics/graphical_primitives.h
+    Sources/Graphics/graphical_primitives.c
+    Sources/Graphics/graphical_derivatives.h
+    Sources/Graphics/graphical_derivatives.c
     main.c)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/.gdbinit DESTINATION ${EXECUTABLE_OUTPUT_PATH})
