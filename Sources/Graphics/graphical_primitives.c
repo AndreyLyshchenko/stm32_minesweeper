@@ -342,7 +342,7 @@ void load_image_from_array(const uint8_t *image, uint8_t top_left_x, uint8_t top
     { 
         for (uint8_t x = top_left_x; x < (bottom_right_x+1); x++)
         {
-            put_pixel(x,y, (0b10000000 & (*(image + (x/8)+(y*16)) << (x%8)))>>7,VIRTUAL);
+            put_pixel(x,y, (0b10000000 & (*(image + (x/8)+(y*16)) << (x%8)))>>7,REAL);
         }
     }
 }

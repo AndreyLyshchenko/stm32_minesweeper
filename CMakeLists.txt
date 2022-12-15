@@ -51,16 +51,10 @@ set(SOURCE_FILES
     stm32/startup/startup_stm32f10x_md.c # Choose startup file for your MCU
     stm32/system_stm32f10x.c
     syscalls/syscalls.c
-    Sources/constant_set.h
     Sources/delay.c
-    Sources/delay.h
-    Sources/buttons.h
     Sources/buttons.c
-    Sources/spi.h
     Sources/spi.c
-    Sources/configuration.h
     Sources/configuration.c
-    Sources/logic.h
     Sources/game_logic.c
     Sources/menu_logic.c
     Sources/end_dialog_logic.c
@@ -69,9 +63,7 @@ set(SOURCE_FILES
     Sources/Graphics/game_end.c
     Sources/Graphics/loading_bit_map.c
     Sources/Graphics/game_piktogramms.c
-    Sources/Graphics/graphical_primitives.h
     Sources/Graphics/graphical_primitives.c
-    Sources/Graphics/graphical_derivatives.h
     Sources/Graphics/graphical_derivatives.c
     main.c)
 
