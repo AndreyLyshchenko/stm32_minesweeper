@@ -18,6 +18,12 @@
     void initialize_click_funktions_array();
     void use_click_function(uint8_t pressed_button);
     void transfer_control_to_buttons();
+    //void do_action_with_surrounding_tiles(uint8_t x_number, uint8_t y_number,uint8_t *array,void *action);
+    uint8_t do_action_with_surrounding_tiles(uint8_t x_number, uint8_t y_number,void *action, bool do_with_centre_tile);
+    uint8_t fill_array_with(uint8_t x_number, uint8_t y_number);
+    uint8_t look_for_mines(uint8_t x_number, uint8_t y_number);
+    uint8_t look_for_tiles(uint8_t x_number, uint8_t y_number);
+    uint8_t make_recusion_call(uint8_t x_number, uint8_t y_number);
     
     void game_over(void);
     void win_check(void);

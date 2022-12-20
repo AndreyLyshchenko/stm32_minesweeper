@@ -42,6 +42,9 @@
     #define CLICK_LEFT 9
     #define CLICK_RIGHT 12
 
+    #define DO_WITH_CENTRE 1
+    #define IGNORE_CENTRE 0
+
     struct set_info
     {
         uint8_t item_count;

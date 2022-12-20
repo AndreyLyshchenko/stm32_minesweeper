@@ -21,6 +21,7 @@ int __attribute((noreturn)) main(void)
 	preconfigure_microcontroller();
 	preconfigure_SPI();
 	select_mode_enabled = false;
+	//do_action_with_surrounding_tiles();
 	while (1)
 	{
 		run_main_menu();

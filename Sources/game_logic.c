@@ -15,6 +15,9 @@ bool first_check;
 bool now_drawing;
 uint8_t ingame_selector;
 
+// Is used in do_action_with_surrounding_tiles functoin to simplyfy extrnal function calls
+uint8_t global_filler;
+
 
 
 void inicialise_tile_memory(void)
@@ -75,8 +78,10 @@ void spawn_mines()
 		}
 	}	
 
-	uint8_t map = searching_for_tiles_around_selected_one(posx,posy);
-	filling_surrounding_tiles(map,posx,posy,3); 		 	
+	//uint8_t map = searching_for_tiles_around_selected_one(posx,posy);
+	global_filler = 3;//
+	do_action_with_surrounding_tiles(posx,posy,fill_array_with,DO_WITH_CENTRE);	//	 	
+	//filling_surrounding_tiles(map,posx,posy,3); 
 
 	srand(TIM2 -> CNT);
 	while (mine_count>0)
@@ -94,23 +99,27 @@ void spawn_mines()
 		}
 	}
 
-	filling_surrounding_tiles(map,posx,posy,0);
+	//filling_surrounding_tiles(map,posx,posy,0);
+	global_filler = 0;
+	do_action_with_surrounding_tiles(posx,posy,fill_array_with,DO_WITH_CENTRE);	//
 
 	for (uint8_t i = 0; i < board_mine_count; i++) // Checking for mines, surrounded by another mines 
 	{
 		uint8_t x = mines_coordinates[i] >> 8;
 		uint8_t y = mines_coordinates[i] & 0x00FF;
 		uint8_t tiles_around_mine_map = searching_for_tiles_around_selected_one(x,y);
-		uint8_t tiles_around_mine = 0;
-		uint8_t mines_around_mine = 0;
-		if (tiles_around_mine_map & 0b10000000)	{if (mine_field[x-1][y-1]==1) {mines_around_mine++;} tiles_around_mine++;} 		
-		if (tiles_around_mine_map & 0b01000000) {if (mine_field[x][y-1]==1) {mines_around_mine++;} tiles_around_mine++;}
-		if (tiles_around_mine_map & 0b00100000) {if (mine_field[x+1][y-1]==1) {mines_around_mine++;} tiles_around_mine++;} 
-		if (tiles_around_mine_map & 0b00010000) {if (mine_field[x+1][y]==1) {mines_around_mine++;} tiles_around_mine++;}
-		if (tiles_around_mine_map & 0b00001000) {if (mine_field[x+1][y+1]==1) {mines_around_mine++;} tiles_around_mine++;}
-		if (tiles_around_mine_map & 0b00000100) {if (mine_field[x][y+1]==1) {mines_around_mine++;} tiles_around_mine++;}
-		if (tiles_around_mine_map & 0b00000010) {if (mine_field[x-1][y+1]==1) {mines_around_mine++;} tiles_around_mine++;}
-		if (tiles_around_mine_map & 0b00000001) {if (mine_field[x-1][y]==1) {mines_around_mine++;} tiles_around_mine++;} 
+		uint8_t tiles_around_mine = do_action_with_surrounding_tiles(x,y,look_for_tiles,IGNORE_CENTRE);
+		uint8_t mines_around_mine = do_action_with_surrounding_tiles(x,y,look_for_mines,IGNORE_CENTRE);
+		// uint8_t tiles_around_mine = 0;
+		// uint8_t mines_around_mine = 0;
+		// if (tiles_around_mine_map & 0b10000000)	{if (mine_field[x-1][y-1]==1) {mines_around_mine++;} tiles_around_mine++;} 		
+		// if (tiles_around_mine_map & 0b01000000) {if (mine_field[x][y-1]==1) {mines_around_mine++;} tiles_around_mine++;}
+		// if (tiles_around_mine_map & 0b00100000) {if (mine_field[x+1][y-1]==1) {mines_around_mine++;} tiles_around_mine++;} 
+		// if (tiles_around_mine_map & 0b00010000) {if (mine_field[x+1][y]==1) {mines_around_mine++;} tiles_around_mine++;}
+		// if (tiles_around_mine_map & 0b00001000) {if (mine_field[x+1][y+1]==1) {mines_around_mine++;} tiles_around_mine++;}
+		// if (tiles_around_mine_map & 0b00000100) {if (mine_field[x][y+1]==1) {mines_around_mine++;} tiles_around_mine++;}
+		// if (tiles_around_mine_map & 0b00000010) {if (mine_field[x-1][y+1]==1) {mines_around_mine++;} tiles_around_mine++;}
+		// if (tiles_around_mine_map & 0b00000001) {if (mine_field[x-1][y]==1) {mines_around_mine++;} tiles_around_mine++;} 
 		if (tiles_around_mine == mines_around_mine)
 		{
 			bad_seed_flag = true;
@@ -123,6 +132,44 @@ void spawn_mines()
 	}
 	
 }
+
+//void do_action_with_surrounding_tiles(uint8_t x_number, uint8_t y_number, uint8_t *array, void *action)
+uint8_t do_action_with_surrounding_tiles(uint8_t x_number, uint8_t y_number,void *action, bool do_with_centre_tile)
+{
+	const int8_t DIR_X[] = {-1,-1,-1, 0,0, 1,1,1};
+	const int8_t DIR_Y[] = {-1, 0, 1,-1,1,-1,0,1};
+	uint8_t (*f_call)(uint8_t,uint8_t) = action;
+	uint8_t return_counter = 0;
+	if (do_with_centre_tile)
+	{
+		//action 0 0 
+		return_counter+=f_call(x_number,y_number);
+	}
+	for (uint8_t i = 0; i < sizeof(DIR_X)/sizeof(int8_t); i++)
+	{	
+		if ((x_number+DIR_X[i]>=0) && (y_number+DIR_Y[i]>=0) && (x_number+DIR_X[i]<=(X_TILE_COUNT-1)) && (y_number+DIR_Y[i]<=Y_TILE_COUNT-1))
+		{
+			//action i i 
+			return_counter+=f_call(x_number+DIR_X[i],y_number+DIR_Y[i]);
+		}	
+	}
+	return return_counter;
+}
+
+uint8_t fill_array_with(uint8_t x_number, uint8_t y_number)
+{
+	mine_field[x_number][y_number] = global_filler;
+	return 0;
+}
+uint8_t look_for_mines(uint8_t x_number, uint8_t y_number)
+{
+	return (mine_field[x_number][y_number] == 1); 
+}
+uint8_t look_for_tiles(uint8_t x_number, uint8_t y_number)
+{
+	return 1;
+}
+
 
 uint8_t searching_for_tiles_around_selected_one(uint8_t x_number, uint8_t y_number)
 {
@@ -158,19 +205,19 @@ uint8_t searching_for_tiles_around_selected_one(uint8_t x_number, uint8_t y_numb
 	return result;
 }
 
-void filling_surrounding_tiles(uint8_t map, uint8_t x_number, uint8_t y_number, uint8_t filler)
-{
-	mine_field[x_number][y_number] = filler;
+// void filling_surrounding_tiles(uint8_t map, uint8_t x_number, uint8_t y_number, uint8_t filler)
+// {
+// 	mine_field[x_number][y_number] = filler;
 
-	if (map & 0b10000000) {mine_field[x_number-1][y_number-1]=filler;} 		
-	if (map & 0b01000000) {mine_field[x_number][y_number-1]=filler;}
-	if (map & 0b00100000) {mine_field[x_number+1][y_number-1]=filler;} 
-	if (map & 0b00010000) {mine_field[x_number+1][y_number]=filler;}
-	if (map & 0b00001000) {mine_field[x_number+1][y_number+1]=filler;}
-	if (map & 0b00000100) {mine_field[x_number][y_number+1]=filler;}
-	if (map & 0b00000010) {mine_field[x_number-1][y_number+1]=filler;}
-	if (map & 0b00000001) {mine_field[x_number-1][y_number]=filler;} 
-}
+// 	if (map & 0b10000000) {mine_field[x_number-1][y_number-1]=filler;} 		
+// 	if (map & 0b01000000) {mine_field[x_number][y_number-1]=filler;}
+// 	if (map & 0b00100000) {mine_field[x_number+1][y_number-1]=filler;} 
+// 	if (map & 0b00010000) {mine_field[x_number+1][y_number]=filler;}
+// 	if (map & 0b00001000) {mine_field[x_number+1][y_number+1]=filler;}
+// 	if (map & 0b00000100) {mine_field[x_number][y_number+1]=filler;}
+// 	if (map & 0b00000010) {mine_field[x_number-1][y_number+1]=filler;}
+// 	if (map & 0b00000001) {mine_field[x_number-1][y_number]=filler;} 
+// }
 
 void calculate_how_many_mines_around()
 {
@@ -181,16 +228,17 @@ void calculate_how_many_mines_around()
         {
             if (mine_field[i][j]==0) // Tile does not need to know how many mines around it if there is a mine inside it
             {
-				current_mine_count = 0;
-                uint8_t map = searching_for_tiles_around_selected_one(i,j);
-				if (map & 0b10000000) {current_mine_count+=mine_field[i-1][j-1];} 		
-				if (map & 0b01000000) {current_mine_count+=mine_field[i][j-1];}
-				if (map & 0b00100000) {current_mine_count+=mine_field[i+1][j-1];} 
-				if (map & 0b00010000) {current_mine_count+=mine_field[i+1][j];}
-				if (map & 0b00001000) {current_mine_count+=mine_field[i+1][j+1];}
-				if (map & 0b00000100) {current_mine_count+=mine_field[i][j+1];}
-				if (map & 0b00000010) {current_mine_count+=mine_field[i-1][j+1];}
-				if (map & 0b00000001) {current_mine_count+=mine_field[i-1][j];}          
+				current_mine_count = do_action_with_surrounding_tiles(i,j,look_for_mines,IGNORE_CENTRE);
+				// current_mine_count = 0;
+                // uint8_t map = searching_for_tiles_around_selected_one(i,j);
+				// if (map & 0b10000000) {current_mine_count+=mine_field[i-1][j-1];} 		
+				// if (map & 0b01000000) {current_mine_count+=mine_field[i][j-1];}
+				// if (map & 0b00100000) {current_mine_count+=mine_field[i+1][j-1];} 
+				// if (map & 0b00010000) {current_mine_count+=mine_field[i+1][j];}
+				// if (map & 0b00001000) {current_mine_count+=mine_field[i+1][j+1];}
+				// if (map & 0b00000100) {current_mine_count+=mine_field[i][j+1];}
+				// if (map & 0b00000010) {current_mine_count+=mine_field[i-1][j+1];}
+				// if (map & 0b00000001) {current_mine_count+=mine_field[i-1][j];}          
             }
             else
             {
@@ -332,17 +380,29 @@ void open_tile(uint8_t x_number, uint8_t y_number)
 	copy_map(Board,Bit_map);
 	if (how_many_mines_around[x_number][y_number]==0)
 	{
-		uint8_t map = searching_for_tiles_around_selected_one(x_number,y_number);
-		if ((map & 0b10000000) && (recursion_marker[x_number-1][y_number-1]==0) && (tile_memory[x_number-1][y_number-1]!=PIKTOGRAMM_ARRAY_LENGTH)) {open_tile(x_number-1,y_number-1);} 		
-		if ((map & 0b01000000) && (recursion_marker[x_number][y_number-1]==0) && (tile_memory[x_number][y_number-1]!=PIKTOGRAMM_ARRAY_LENGTH)) {open_tile(x_number,y_number-1);}
-		if ((map & 0b00100000) && (recursion_marker[x_number+1][y_number-1]==0) && (tile_memory[x_number+1][y_number-1]!=PIKTOGRAMM_ARRAY_LENGTH)) {open_tile(x_number+1,y_number-1);} 
-		if ((map & 0b00010000) && (recursion_marker[x_number+1][y_number]==0) && (tile_memory[x_number+1][y_number]!=PIKTOGRAMM_ARRAY_LENGTH)) {open_tile(x_number+1,y_number);}
-		if ((map & 0b00001000) && (recursion_marker[x_number+1][y_number+1]==0) && (tile_memory[x_number+1][y_number+1]!=PIKTOGRAMM_ARRAY_LENGTH)) {open_tile(x_number+1,y_number+1);}
-		if ((map & 0b00000100) && (recursion_marker[x_number][y_number+1]==0) && (tile_memory[x_number][y_number+1]!=PIKTOGRAMM_ARRAY_LENGTH)) {open_tile(x_number,y_number+1);}
-		if ((map & 0b00000010) && (recursion_marker[x_number-1][y_number+1]==0) && (tile_memory[x_number-1][y_number+1]!=PIKTOGRAMM_ARRAY_LENGTH)) {open_tile(x_number-1,y_number+1);}
-		if ((map & 0b00000001) && (recursion_marker[x_number-1][y_number]==0) && (tile_memory[x_number-1][y_number]!=PIKTOGRAMM_ARRAY_LENGTH)) {open_tile(x_number-1,y_number);}   
+		do_action_with_surrounding_tiles(x_number,y_number,make_recusion_call,IGNORE_CENTRE);
+		// uint8_t map = searching_for_tiles_around_selected_one(x_number,y_number);
+		// if ((map & 0b10000000) && 
+		// (recursion_marker[x_number-1][y_number-1]==0) && 
+		// (tile_memory[x_number-1][y_number-1]!=PIKTOGRAMM_ARRAY_LENGTH)) 
+		// {open_tile(x_number-1,y_number-1);} 		
+		// if ((map & 0b01000000) && (recursion_marker[x_number][y_number-1]==0) && (tile_memory[x_number][y_number-1]!=PIKTOGRAMM_ARRAY_LENGTH)) {open_tile(x_number,y_number-1);}
+		// if ((map & 0b00100000) && (recursion_marker[x_number+1][y_number-1]==0) && (tile_memory[x_number+1][y_number-1]!=PIKTOGRAMM_ARRAY_LENGTH)) {open_tile(x_number+1,y_number-1);} 
+		// if ((map & 0b00010000) && (recursion_marker[x_number+1][y_number]==0) && (tile_memory[x_number+1][y_number]!=PIKTOGRAMM_ARRAY_LENGTH)) {open_tile(x_number+1,y_number);}
+		// if ((map & 0b00001000) && (recursion_marker[x_number+1][y_number+1]==0) && (tile_memory[x_number+1][y_number+1]!=PIKTOGRAMM_ARRAY_LENGTH)) {open_tile(x_number+1,y_number+1);}
+		// if ((map & 0b00000100) && (recursion_marker[x_number][y_number+1]==0) && (tile_memory[x_number][y_number+1]!=PIKTOGRAMM_ARRAY_LENGTH)) {open_tile(x_number,y_number+1);}
+		// if ((map & 0b00000010) && (recursion_marker[x_number-1][y_number+1]==0) && (tile_memory[x_number-1][y_number+1]!=PIKTOGRAMM_ARRAY_LENGTH)) {open_tile(x_number-1,y_number+1);}
+		// if ((map & 0b00000001) && (recursion_marker[x_number-1][y_number]==0) && (tile_memory[x_number-1][y_number]!=PIKTOGRAMM_ARRAY_LENGTH)) {open_tile(x_number-1,y_number);}   
 	}
 	win_check();
+}
+uint8_t make_recusion_call(uint8_t x_number, uint8_t y_number)
+{
+	if (recursion_marker[x_number][y_number]==0 && tile_memory[x_number][y_number]!=PIKTOGRAMM_ARRAY_LENGTH)
+	{
+		open_tile(x_number,y_number);
+	}
+	return 0;
 }
 
 void ingame_click_up(void)
