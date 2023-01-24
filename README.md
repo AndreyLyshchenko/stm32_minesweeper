@@ -17,8 +17,14 @@
 
 ## Реализация
 <details>
-  <summary>Gameplay.gif</summary>
+  <summary>Gif с геймплеем</summary>
 
    ![gameplay](https://s3.gifyu.com/images/3fps.gif)
 
+</details>
+
+<details>
+  <summary>Изображения</summary>
+
+   ![main_screen](/Sources/img/IMG_0314.jpg)
 </details>
